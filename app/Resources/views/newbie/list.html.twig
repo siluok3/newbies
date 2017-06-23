@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <h2>List of Newbies</h2>
+    <table class="table table-striped">
+        <tr>
+            <th>Id</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Gender</th>
+            <th>Nationality</th>
+            <th>Languages</th>
+        </tr>
+        {% for newbie in newbies %}
+        <tr>
+            <td>{{ newbie.id }}</td>
+
+            <td>{{ newbie.firstname }}</td>
+
+            <td>{{ newbie.lastname }}</td>
+
+            {% if newbie.gender is same as(0) %}
+                <td>Male</td>
+            {% else %}
+                <td>Female</td>
+            {% endif %}
+
+            <td>{{ newbie.nationality }}</td>
+
+            {% for key, language in newbie.languages %}
+                <td>{{ newbie.languages[key] }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

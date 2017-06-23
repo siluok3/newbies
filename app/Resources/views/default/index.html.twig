@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="starter-template">
+            <h1>Buddies Matcher Tool</h1>
+            <p class="lead">Use this tool to match employees with newbies.<br> Check the lists on the navigation bar or press the button match the buddies</p>
+        </div>
+    </div><!-- /.container -->
+    <div class="col-md-12 text-center">
+        <form action="/match">
+            <button type="submit" class="btn btn-lg btn-success" >Match</button>
+        </form>
+        <div class="checkboxes">
+            <label class="checkbox-inline"><input type="checkbox" value="nationality" checked>Nationality</label>
+            <label class="checkbox-inline"><input type="checkbox" value="languages" checked>Languages</label>
+            <label class="checkbox-inline"><input type="checkbox" value="age" checked>Age</label>
+            <label class="checkbox-inline"><input type="checkbox" value="Gender" checked>Gender</label>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+
+
+

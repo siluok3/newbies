@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <h2>List of Employees</h2>
+    <table class="table table-striped">
+        <tr>
+            <th>Id</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Gender</th>
+            <th>Nationality</th>
+            <th>Languages</th>
+        </tr>
+        {% for employee in employees %}
+        <tr>
+            <td>{{ employee.id }}</td>
+
+            <td>{{ employee.firstname }}</td>
+
+            <td>{{ employee.lastname }}</td>
+
+            {% if employee.gender is same as(0) %}
+                <td>Male</td>
+            {% else %}
+                <td>Female</td>
+            {% endif %}
+
+            <td>{{ employee.nationality }}</td>
+
+            {% for key, language in employee.languages %}
+                <td>{{ employee.languages[key] }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
