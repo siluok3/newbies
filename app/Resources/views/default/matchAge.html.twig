@@ -1,8 +1,20 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
+    <script>
+        function display() {
+            var x = document.getElementById('table');
+            if (x.style.display === 'none') {
+                x.style.display = 'block';
+                var display = {{ render(controller('AppBundle:Default:filterByNationality')) }};
+                console.log(display);
+            } else {
+                x.style.display = 'none';
+            }
+        }
+    </script>
     <h3>Matches</h3>
-    <div class="match_tables">
+    <div id="table">
         <table style="float: left">
             <tr>
                 <th>Matched Employee</th>
@@ -27,8 +39,6 @@
                 </tr>
             {% endfor %}
         </table>
-        <form action="{{ render(controller("AppBundle:Default:filterByNationality")) }}">
-            <button type="submit" class="btn btn-lg btn-success" >Match</button>
-        </form>
+        <button onclick="display()">Display</button>
     </div>
 {% endblock %}

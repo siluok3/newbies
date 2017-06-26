@@ -27,6 +27,10 @@
                 </tr>
             {% endfor %}
         </table>
+        <table>
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}
+        </table>
     </div>
-    <button onclick="{{ render(controller("AppBundle:Default:filterByNationality")) }}">Click me</button>
 {% endblock %}

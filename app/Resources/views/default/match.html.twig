@@ -43,16 +43,11 @@
             </tr>
             {% endfor %}
         </table>
-        <div>
-            <form action="#">
-                <button type="submit" class="btn btn-lg btn-success" >Match</button>
-            </form>
-            <div class="checkboxes">
-                <label class="checkbox-inline"><input type="checkbox" value="nationality" checked>Nationality</label>
-                <label class="checkbox-inline"><input type="checkbox" value="languages" checked>Languages</label>
-                <label class="checkbox-inline"><input type="checkbox" value="age" checked>Age</label>
-                <label class="checkbox-inline"><input type="checkbox" value="Gender" checked>Gender</label>
-            </div>
-        </div>
+        <table style="float: left">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            {{ form_end(form) }}
+        </table>
     </div>
+
 {% endblock %}
