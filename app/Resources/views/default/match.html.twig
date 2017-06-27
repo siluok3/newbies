@@ -1,9 +1,13 @@
 {% extends '::base.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% block body %}
+    <div class="alert alert-success">
+        <strong>{{ success }}</strong>
+    </div>
     <h3>Matches</h3>
-    <div class="match_tables">
-        <table style="float: left">
+    <div class="table-responsive col-md-6">
+        <table class="table" style="float: left">
             <tr>
                 <th>Matched Employee</th>
                 <th>Nationality</th>
@@ -27,7 +31,9 @@
             </tr>
             {% endfor %}
         </table>
-        <table style="float: left">
+    </div>
+    <div class="table-responsive col-md-6">
+        <table class="table" style="float: left">
             <tr>
                 <th>Newbie</th>
                 <th>Nationality</th>
@@ -51,11 +57,19 @@
             </tr>
             {% endfor %}
         </table>
-        <table style="float: left">
-            {{ form_start(form) }}
-            {{ form_widget(form) }}
-            {{ form_end(form) }}
-        </table>
+            <div class="form-group">
+                {{ form_start(form) }}
+                <div class="col-xs-6">
+                    {{ form_widget(form) }}
+                </div>
+                {{ form_end(form) }}
+            </div>
     </div>
-
+    <script>
+        window.setTimeout(function() {
+            $(".alert-success").fadeTo(300, 0).slideUp(500, function(){
+                $(this).remove();
+            });
+        }, 2000);
+    </script>
 {% endblock %}

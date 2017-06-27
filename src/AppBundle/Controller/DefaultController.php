@@ -199,25 +199,11 @@ class DefaultController extends Controller
      */
     public function matchAction(EntityManagerInterface $em, Request $request)
     {
-
-        /*$employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality, e.age, e.gender, e.languages
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender'
-        )->setParameter('age', 5); */
         $employees = $em->getRepository('AppBundle:Employee')
             ->filterAllEmployees();
 
-        /*$newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.nationality, n.age, n.gender, n.languages
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender'
-        )->setParameter('age', 5); */
         $newbies = $em->getRepository('AppBundle:Newbie')
             ->filterAllNewbies();
-
-        //$employees = $employeesQuery->getResult();
-        //$newbies = $newbiesQuery->getResult();
 
         $form = $this->createForm(FilterType::class);
         $form->handleRequest($request);
@@ -229,67 +215,63 @@ class DefaultController extends Controller
             $languages = $form->get('languages')->getData();
 
             if($age == true && $gender == true && $nationality == true && $languages == true){
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender = n.gender AND e.nationality = n.nationality'
-                )->setParameter('age', 5);
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllEmployees();
 
-
-
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender=n.gender and e.nationality = n.nationality'
-                )->setParameter('age', 5);
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllNewbies();
             }
-
             else if($age == true && $gender == true && $nationality == false && $languages == true){
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender = n.gender'
-                )->setParameter('age', 5);
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButNationalityEmployees();
 
-
-
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender=n.gender'
-                )->setParameter('age', 5);
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButNationalityNewbies();
             }
 
             else if($age == true && $gender == false && $nationality == true && $languages == true){
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality'
-                )->setParameter('age', 5);
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButGenderEmployees();
 
-
-
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality=n.nationality'
-                )->setParameter('age', 5);
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButGenderNewbies();
             }
 
             else if($age == false && $gender == true && $nationality == true && $languages == true){
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender = n.gender AND e.nationality = n.nationality'
-                );
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButAgeEmployees();
 
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButAgeNewbies();
+            }
 
+            else if($age == true && $gender == true && $nationality == true && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButLanguagesEmployees();
 
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender = n.gender AND e.nationality=n.nationality'
-                );
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButLanguagesNewbies();
+            }
+            else if($age == true && $gender == false && $nationality == true && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterByNationalityAndAgeEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterByNationalityAndAgeNewbies();
+            }
+            else if($age == false && $gender == true && $nationality == true && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterByNationalityAndGenderEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterByNationalityAndGenderNewbies();
+            }
+            else if($age == true && $gender == true && $nationality == false && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterByAgeAndGenderEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterByAgeAndGenderNewbies();
             }
 
             else if($age == true) {
@@ -321,92 +303,14 @@ class DefaultController extends Controller
                     JOIN AppBundle:Newbie n WITH e.gender=n.gender'
                 );
             }
-            $employees = $employeesQuery->getResult();
-            $newbies = $newbiesQuery->getResult();
-
         }
+        $success = 'Filters where applied!';
 
         return $this->render('default/match.html.twig', [
             'employees' => $employees,
             'newbies' => $newbies,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'success' => $success
         ]);
     }
-
-    public function filterByNationalityAction(EntityManagerInterface $em, Request $request) {
-
-        $this->$request->request->get('match');
-
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality, e.gender, e.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
-
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, e.nationality, n.gender, n.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
-
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
-
-        return $this->render('default/match.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies
-        ]);
-
-    }
-
-    public function filterByAgeAction(EntityManagerInterface $em) {
-
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
-
-
-
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
-
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
-
-        return $this->render('default/matchAge.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies
-        ]);
-    }
-
-    public function filterByGenderAction(EntityManagerInterface $em) {
-
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality, e.age, e.gender
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.gender = n.gender'
-        );
-
-
-
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.nationality, n.age, n.gender
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.gender = n.gender'
-        );
-
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
-
-        return $this->render('default/match.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies
-        ]);
-    }
-
 }
