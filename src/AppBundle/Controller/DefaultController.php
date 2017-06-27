@@ -52,13 +52,13 @@ class DefaultController extends Controller
     {
 
         $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality
+            'SELECT e.firstname, e.lastname, e.nationality, e.gender, e.age, e.languages
             FROM AppBundle:Employee e
             JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
         );
 
         $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, e.nationality
+            'SELECT n.firstname, n.lastname, e.nationality, e.gender, e.age, e.languages
             FROM AppBundle:Employee e
             JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
         );
@@ -70,8 +70,6 @@ class DefaultController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
             $nationality = $form->get('nationality')->getData();
             $age = $form->get('age')->getData();
             $gender =$form->get('gender')->getData();
@@ -79,7 +77,7 @@ class DefaultController extends Controller
 
             if($age == true) {
                 $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
                     FROM AppBundle:Employee e
                     JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
                     )->setParameter('age', 5);
@@ -87,14 +85,32 @@ class DefaultController extends Controller
 
 
                 $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
                     FROM AppBundle:Employee e
                     JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
                     )->setParameter('age', 5);
 
-                $employees = $employeesQuery->getResult();
-                $newbies = $newbiesQuery->getResult();
+                //$employees = $employeesQuery->getResult();
+                //$newbies = $newbiesQuery->getResult();
             }
+            if($gender == true) {
+                $employeesQuery = $em->createQuery(
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
+                );
+
+                $newbiesQuery = $em->createQuery(
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
+                );
+
+                //$employees = $employeesQuery->getResult();
+                //$newbies = $newbiesQuery->getResult();
+            }
+            $employees = $employeesQuery->getResult();
+            $newbies = $newbiesQuery->getResult();
 
         }
 
@@ -181,25 +197,134 @@ class DefaultController extends Controller
     /**
      * @Route("/match", name="match")
      */
-    public function matchAction(EntityManagerInterface $em)
+    public function matchAction(EntityManagerInterface $em, Request $request)
     {
 
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality, e.age, e.gender
+        /*$employeesQuery = $em->createQuery(
+            'SELECT e.firstname, e.lastname, e.nationality, e.age, e.gender, e.languages
             FROM AppBundle:Employee e
             JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender'
-        )->setParameter('age', 5);
+        )->setParameter('age', 5); */
+        $employees = $em->getRepository('AppBundle:Employee')
+            ->filterAllEmployees();
 
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.nationality, n.age, n.gender
+        /*$newbiesQuery = $em->createQuery(
+            'SELECT n.firstname, n.lastname, n.nationality, n.age, n.gender, n.languages
             FROM AppBundle:Employee e
             JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender'
-        )->setParameter('age', 5);
+        )->setParameter('age', 5); */
+        $newbies = $em->getRepository('AppBundle:Newbie')
+            ->filterAllNewbies();
 
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
+        //$employees = $employeesQuery->getResult();
+        //$newbies = $newbiesQuery->getResult();
 
         $form = $this->createForm(FilterType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $nationality = $form->get('nationality')->getData();
+            $age = $form->get('age')->getData();
+            $gender =$form->get('gender')->getData();
+            $languages = $form->get('languages')->getData();
+
+            if($age == true && $gender == true && $nationality == true && $languages == true){
+                $employeesQuery = $em->createQuery(
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender = n.gender AND e.nationality = n.nationality'
+                )->setParameter('age', 5);
+
+
+
+                $newbiesQuery = $em->createQuery(
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender=n.gender and e.nationality = n.nationality'
+                )->setParameter('age', 5);
+            }
+
+            else if($age == true && $gender == true && $nationality == false && $languages == true){
+                $employeesQuery = $em->createQuery(
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender = n.gender'
+                )->setParameter('age', 5);
+
+
+
+                $newbiesQuery = $em->createQuery(
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender=n.gender'
+                )->setParameter('age', 5);
+            }
+
+            else if($age == true && $gender == false && $nationality == true && $languages == true){
+                $employeesQuery = $em->createQuery(
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality'
+                )->setParameter('age', 5);
+
+
+
+                $newbiesQuery = $em->createQuery(
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality=n.nationality'
+                )->setParameter('age', 5);
+            }
+
+            else if($age == false && $gender == true && $nationality == true && $languages == true){
+                $employeesQuery = $em->createQuery(
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender = n.gender AND e.nationality = n.nationality'
+                );
+
+
+
+                $newbiesQuery = $em->createQuery(
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender = n.gender AND e.nationality=n.nationality'
+                );
+            }
+
+            else if($age == true) {
+                $employeesQuery = $em->createQuery(
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
+                )->setParameter('age', 5);
+
+
+
+                $newbiesQuery = $em->createQuery(
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
+                )->setParameter('age', 5);
+            }
+
+            else if($gender == true) {
+                $employeesQuery = $em->createQuery(
+                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
+                );
+
+                $newbiesQuery = $em->createQuery(
+                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
+                );
+            }
+            $employees = $employeesQuery->getResult();
+            $newbies = $newbiesQuery->getResult();
+
+        }
 
         return $this->render('default/match.html.twig', [
             'employees' => $employees,

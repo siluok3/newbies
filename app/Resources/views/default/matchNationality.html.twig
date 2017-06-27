@@ -7,11 +7,23 @@
             <tr>
                 <th>Matched Employee</th>
                 <th>Nationality</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Languages</th>
             </tr>
             {% for employee in employees %}
                 <tr>
                     <td>{{ employee.firstname }} {{ employee.lastname }}</td>
                     <td>{{ employee.nationality }}</td>
+                    <td>{{ employee.age }}</td>
+                    {% if employee.gender is same as(0) %}
+                        <td>Male</td>
+                    {% else %}
+                        <td>Female</td>
+                    {% endif %}
+                    {% for key, language in employee.languages %}
+                        <td>{{ employee.languages[key] }}</td>
+                    {% endfor %}
                 </tr>
             {% endfor %}
         </table>
@@ -19,11 +31,23 @@
             <tr>
                 <th>Newbie</th>
                 <th>Nationality</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Languages</th>
             </tr>
             {% for newbie in newbies %}
                 <tr>
                     <td>{{ newbie.firstname }} {{ newbie.lastname }}</td>
                     <td>{{ newbie.nationality }}</td>
+                    <td>{{ newbie.age }}</td>
+                    {% if newbie.gender is same as(0) %}
+                        <td>Male</td>
+                    {% else %}
+                        <td>Female</td>
+                    {% endif %}
+                    {% for key, language in newbie.languages %}
+                        <td>{{ newbie.languages[key] }}</td>
+                    {% endfor %}
                 </tr>
             {% endfor %}
         </table>

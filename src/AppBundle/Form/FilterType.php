@@ -21,10 +21,10 @@ class FilterType extends AbstractType
     {
 
         $builder
-            ->add('nationality', CheckboxType::class, array('mapped' => false, 'required' => false))
-            ->add('age', CheckboxType::class, array('mapped' => false, 'required' => false))
-            ->add('gender', CheckboxType::class, array('mapped' => false, 'required' => false))
-            ->add('languages', CheckboxType::class, array('mapped' => false, 'required' => false))
+            ->add('nationality', CheckboxType::class, array('mapped' => false, 'required' => false, 'data' => true))
+            ->add('age', CheckboxType::class, array('mapped' => false, 'required' => false, 'data' => true ))
+            ->add('gender', CheckboxType::class, array('mapped' => false, 'required' => false, 'data' => true ))
+            ->add('languages', CheckboxType::class, array('mapped' => false, 'required' => false, 'data' => true))
             ->add('match', SubmitType::class);
     }
 

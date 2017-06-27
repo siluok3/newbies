@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use Doctrine\ORM\EntityRepository;
 /**
  * EmployeeRepository
  *
@@ -10,4 +11,14 @@ namespace AppBundle\Repository;
  */
 class EmployeeRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function filterAllEmployees()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT e.firstname, e.lastname, e.nationality, e.age, e.gender, e.languages
+            FROM AppBundle:Employee e
+            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender'
+            )->setParameter('age', 5)
+            ->getResult();
+    }
 }

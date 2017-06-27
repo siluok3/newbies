@@ -10,4 +10,14 @@ namespace AppBundle\Repository;
  */
 class NewbieRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function filterAllNewbies()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT n.firstname, n.lastname, n.nationality, n.age, n.gender, n.languages
+            FROM AppBundle:Employee e
+            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender'
+            )->setParameter('age', 5)
+            ->getResult();
+    }
 }

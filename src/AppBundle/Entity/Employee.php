@@ -218,9 +218,5 @@ class Employee
         return $this->languages;
     }
 
-    /*public function __toString()
-    {
-        return $this->getLastname();
-    }*/
 }
 

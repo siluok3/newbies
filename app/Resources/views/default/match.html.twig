@@ -9,6 +9,7 @@
                 <th>Nationality</th>
                 <th>Gender</th>
                 <th>Age</th>
+                <th>Languages</th>
             </tr>
             {% for employee in employees %}
             <tr>
@@ -20,6 +21,9 @@
                     <td>Female</td>
                 {% endif %}
                 <td>{{ employee.age }}</td>
+                {% for key, language in employee.languages %}
+                    <td>{{ employee.languages[key] }}</td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </table>
@@ -29,6 +33,7 @@
                 <th>Nationality</th>
                 <th>Gender</th>
                 <th>Age</th>
+                <th>Languages</th>
             </tr>
             {% for newbie in newbies %}
             <tr>
@@ -40,6 +45,9 @@
                     <td>Female</td>
                 {% endif %}
                 <td>{{ newbie.age }}</td>
+                {% for key, language in newbie.languages %}
+                    <td>{{ newbie.languages[key] }}</td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </table>
