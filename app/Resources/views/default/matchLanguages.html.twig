@@ -10,7 +10,11 @@
             </tr>
             {% for employee in employees %}
                 <tr>
-                    <td>{{ employee.firstname }} {{ employee.lastname }}</td>
+                    {% if employee.firstname is empty %}
+                        <td>No match!</td>
+                    {% else %}
+                        <td>{{ employee.firstname }} {{ employee.lastname }}</td>
+                    {% endif %}
                     {% for key, language in employee.languages %}
                         <td>{{ employee.languages[key] }}</td>
                     {% endfor %}

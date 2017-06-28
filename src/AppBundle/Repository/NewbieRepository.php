@@ -134,8 +134,8 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender = n.gender'
+                    FROM AppBundle:Newbie n
+                    JOIN AppBundle:Employee e WITH abs(e.age-n.age)<:age AND e.gender = n.gender '
             )->setParameter('age', 5)
             ->getResult();
     }

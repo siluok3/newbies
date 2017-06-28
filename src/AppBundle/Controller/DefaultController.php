@@ -46,82 +46,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/match_nationality", name="match_by_nationality")
-     */
-    public function matchByNationalityAction(EntityManagerInterface $em, Request $request)
-    {
-
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality, e.gender, e.age, e.languages
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
-
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, e.nationality, e.gender, e.age, e.languages
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
-
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
-
-        $form = $this->createForm(FilterType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $nationality = $form->get('nationality')->getData();
-            $age = $form->get('age')->getData();
-            $gender =$form->get('gender')->getData();
-            $languages = $form->get('languages')->getData();
-
-            if($age == true) {
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-                    )->setParameter('age', 5);
-
-
-
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-                    )->setParameter('age', 5);
-
-                //$employees = $employeesQuery->getResult();
-                //$newbies = $newbiesQuery->getResult();
-            }
-            if($gender == true) {
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
-                );
-
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
-                );
-
-                //$employees = $employeesQuery->getResult();
-                //$newbies = $newbiesQuery->getResult();
-            }
-            $employees = $employeesQuery->getResult();
-            $newbies = $newbiesQuery->getResult();
-
-        }
-
-        return $this->render('default/matchNationality.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies,
-            'form' => $form->createView()
-        ]);
-    }
-
-    /**
      * @Route("/match_languages", name="match_by_languages")
      */
     public function matchByLanguagesAction(EntityManagerInterface $em)
@@ -130,65 +54,32 @@ class DefaultController extends Controller
             'select e.languages from AppBundle:Employee e'
         );
         $employeeLanguages = $employeeLanguagesQuery->getArrayResult();
-        print_r($employeeLanguages);
-        //$test1 = json_encode($employeeLanguages);
-        //echo $test1;
+        //print_r($employeeLanguages);
 
         $newbieLanguagesQuery = $em->createQuery(
             'select n.languages from AppBundle:Newbie n'
         );
         $newbieLanguages = $newbieLanguagesQuery->getArrayResult();
-        print_r($newbieLanguages);
-        //$test2 = json_encode($newbieLanguages);
-        //echo $test2;
+        //print_r($newbieLanguages);
 
         $employeesQuery = $em->createQuery(
             'SELECT e.firstname, e.lastname, e.languages
             FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WHERE e.languages IN (:languages)'
+            LEFT JOIN AppBundle:Newbie n WHERE e.languages IN (:languages)'
         )->setParameter('languages', $newbieLanguages);
 
         $newbiesQuery = $em->createQuery(
             'SELECT n.firstname, n.lastname, n.languages
             FROM AppBundle:Newbie n
-            JOIN AppBundle:Employee e WHERE n.languages IN (:languages)'
+            LEFT JOIN AppBundle:Employee e WHERE n.languages IN (:languages)'
         )->setParameter('languages', $employeeLanguages);
 
         $employees = $employeesQuery->getResult();
-        print_r($employees);
+        //print_r($employees);
         $newbies = $newbiesQuery->getResult();
-        print_r($newbies);
+        //print_r($newbies);
 
         return $this->render('default/matchLanguages.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies
-        ]);
-    }
-
-    /**
-     * @Route("/match_age", name="match_by_age")
-     */
-    public function matchByAgeAction(EntityManagerInterface $em)
-    {
-
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
-
-
-
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
-
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
-
-        return $this->render('default/matchAge.html.twig', [
             'employees' => $employees,
             'newbies' => $newbies
         ]);

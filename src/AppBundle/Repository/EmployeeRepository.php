@@ -134,8 +134,8 @@ class EmployeeRepository extends \Doctrine\ORM\EntityRepository
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender = n.gender'
+                    FROM AppBundle:Newbie n
+                    JOIN AppBundle:Employee e WITH abs(e.age-n.age)<:age AND e.gender = n.gender'
             )->setParameter('age', 5)
             ->getResult();
     }
