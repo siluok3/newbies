@@ -139,4 +139,35 @@ class EmployeeRepository extends \Doctrine\ORM\EntityRepository
             )->setParameter('age', 5)
             ->getResult();
     }
+
+    public function filterOnlyByAgeEmployees()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
+            )->setParameter('age', 5)
+            ->getResult();
+    }
+
+    public function filterOnlyByGenderEmployees()
+    {
+         return $this->getEntityManager()
+            ->createQuery(
+                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender = n.gender'
+            )->getArrayResult();
+    }
+
+    public function filterOnlyByNationalityEmployees()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
+            )->getResult();
+    }
 }

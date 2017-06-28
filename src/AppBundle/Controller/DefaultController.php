@@ -100,12 +100,13 @@ class DefaultController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $nationality = $form->get('nationality')->getData();
             $age = $form->get('age')->getData();
             $gender =$form->get('gender')->getData();
             $languages = $form->get('languages')->getData();
 
-            if($age == true && $gender == true && $nationality == true && $languages == true){
+            if($this->getAllConditions($age,$gender,$nationality,$languages)){
                 $employees = $em->getRepository('AppBundle:Employee')
                     ->filterAllEmployees();
 
@@ -143,6 +144,7 @@ class DefaultController extends Controller
                 $newbies = $em->getRepository('AppBundle:Newbie')
                     ->filterAllButLanguagesNewbies();
             }
+
             else if($age == true && $gender == false && $nationality == true && $languages == false){
                 $employees = $em->getRepository('AppBundle:Employee')
                     ->filterByNationalityAndAgeEmployees();
@@ -150,6 +152,7 @@ class DefaultController extends Controller
                 $newbies = $em->getRepository('AppBundle:Newbie')
                     ->filterByNationalityAndAgeNewbies();
             }
+
             else if($age == false && $gender == true && $nationality == true && $languages == false){
                 $employees = $em->getRepository('AppBundle:Employee')
                     ->filterByNationalityAndGenderEmployees();
@@ -157,6 +160,7 @@ class DefaultController extends Controller
                 $newbies = $em->getRepository('AppBundle:Newbie')
                     ->filterByNationalityAndGenderNewbies();
             }
+
             else if($age == true && $gender == true && $nationality == false && $languages == false){
                 $employees = $em->getRepository('AppBundle:Employee')
                     ->filterByAgeAndGenderEmployees();
@@ -165,34 +169,28 @@ class DefaultController extends Controller
                     ->filterByAgeAndGenderNewbies();
             }
 
-            else if($age == true) {
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-                )->setParameter('age', 5);
+            else if($age == true && $gender == false && $nationality == false && $languages == false) {
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterOnlyByAgeEmployees();
 
-
-
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-                )->setParameter('age', 5);
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterOnlyByAgeNewbies();
             }
 
-            else if($gender == true) {
-                $employeesQuery = $em->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
-                );
+            else if($age == false && $gender == true && $nationality == false && $languages == false) {
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterOnlyByGenderEmployees();
 
-                $newbiesQuery = $em->createQuery(
-                    'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
-                );
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterOnlyByGenderNewbies();
+            }
+
+            else if($age == false && $gender == false && $nationality == true && $languages == false) {
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterOnlyByNationalityEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterOnlyByNationalityNewbies();
             }
         }
         $success = 'Filters where applied!';
@@ -203,5 +201,10 @@ class DefaultController extends Controller
             'form' => $form->createView(),
             'success' => $success
         ]);
+    }
+
+    private function getAllConditions($age,$gender,$nationality,$languages)
+    {
+        return $age == true && $gender == true && $nationality == true && $languages == true;
     }
 }

@@ -139,4 +139,35 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
             )->setParameter('age', 5)
             ->getResult();
     }
+
+    public function filterOnlyByAgeNewbies()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
+            )->setParameter('age', 5)
+            ->getResult();
+    }
+
+    public function filterOnlyByGenderNewbies()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.gender = n.gender'
+            )->getArrayResult();
+    }
+
+    public function filterOnlyByNationalityNewbies()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT n.firstname, n.lastname, n.age, n.nationality, n.gender, n.languages
+                    FROM AppBundle:Employee e
+                    JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
+            )->getResult();
+    }
 }
