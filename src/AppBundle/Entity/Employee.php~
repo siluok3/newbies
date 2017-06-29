@@ -222,28 +222,5 @@ class Employee
     {
         return $this->languages;
     }
-
-    /**
-     * Set newbie
-     *
-     * @param \AppBundle\Entity\Newbie $newbie
-     *
-     * @return Employee
-     */
-    public function setNewbie(\AppBundle\Entity\Newbie $newbie = null)
-    {
-        $this->newbie = $newbie;
-
-        return $this;
-    }
-
-    /**
-     * Get newbie
-     *
-     * @return \AppBundle\Entity\Newbie
-     */
-    public function getNewbie()
-    {
-        return $this->newbie;
-    }
 }
+

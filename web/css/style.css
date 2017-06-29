@@ -10,3 +10,7 @@ body {
 .btn {
     text-align: center;
 }
+
+#form {
+    position: relative;
+}

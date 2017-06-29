@@ -1,14 +1,20 @@
 {% extends '::base.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{# {% form_theme form 'form/checkboxes.html.twig' %} #}
 
 {% block body %}
+    <div class="alert alert-success">
+        <strong>{{ success }}</strong>
+    </div>
     <h3>Matches</h3>
-    <div class="match_tables">
-        <table style="float: left">
+    <div class="table-responsive col-md-6">
+        <table class="table" style="float: left">
             <tr>
                 <th>Matched Employee</th>
                 <th>Nationality</th>
                 <th>Gender</th>
                 <th>Age</th>
+                <th>Languages</th>
             </tr>
             {% for employee in employees %}
             <tr>
@@ -20,15 +26,21 @@
                     <td>Female</td>
                 {% endif %}
                 <td>{{ employee.age }}</td>
+                {% for key, language in employee.languages %}
+                    <td>{{ employee.languages[key] }}</td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </table>
-        <table style="float: left">
+    </div>
+    <div class="table-responsive col-md-6">
+        <table class="table" style="float: left">
             <tr>
                 <th>Newbie</th>
                 <th>Nationality</th>
                 <th>Gender</th>
                 <th>Age</th>
+                <th>Languages</th>
             </tr>
             {% for newbie in newbies %}
             <tr>
@@ -40,19 +52,23 @@
                     <td>Female</td>
                 {% endif %}
                 <td>{{ newbie.age }}</td>
+                {% for key, language in newbie.languages %}
+                    <td>{{ newbie.languages[key] }}</td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </table>
-        <div>
-            <form action="#">
-                <button type="submit" class="btn btn-lg btn-success" >Match</button>
-            </form>
-            <div class="checkboxes">
-                <label class="checkbox-inline"><input type="checkbox" value="nationality" checked>Nationality</label>
-                <label class="checkbox-inline"><input type="checkbox" value="languages" checked>Languages</label>
-                <label class="checkbox-inline"><input type="checkbox" value="age" checked>Age</label>
-                <label class="checkbox-inline"><input type="checkbox" value="Gender" checked>Gender</label>
-            </div>
-        </div>
     </div>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+
+    <script>
+        window.setTimeout(function() {
+            $(".alert-success").fadeTo(300, 0).slideUp(500, function(){
+                $(this).remove();
+            });
+        }, 2000);
+    </script>
 {% endblock %}

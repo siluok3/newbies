@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Employee
+ * Newbie
  *
- * @ORM\Table(name="employee")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\EmployeeRepository")
+ * @ORM\Table(name="newbie")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\NewbieRepository")
  */
-class Employee
+class Newbie
 {
     /**
      * @var int
@@ -64,9 +64,10 @@ class Employee
     private $languages;
 
     /**
-     * @ORM\OneToOne(targetEntity="Newbie", mappedBy="employee")
+     * @ORM\OneToOne(targetEntity = "Employee", inversedBy="newbie")
+     * @ORM\JoinColumn(name="employee_id", referencedColumnName = "id")
      */
-    private $newbie;
+    private $employee;
 
 
     /**
@@ -84,7 +85,7 @@ class Employee
      *
      * @param string $firstname
      *
-     * @return Employee
+     * @return Newbie
      */
     public function setFirstname($firstname)
     {
@@ -108,7 +109,7 @@ class Employee
      *
      * @param string $lastname
      *
-     * @return Employee
+     * @return Newbie
      */
     public function setLastname($lastname)
     {
@@ -132,7 +133,7 @@ class Employee
      *
      * @param string $nationality
      *
-     * @return Employee
+     * @return Newbie
      */
     public function setNationality($nationality)
     {
@@ -156,7 +157,7 @@ class Employee
      *
      * @param integer $gender
      *
-     * @return Employee
+     * @return Newbie
      */
     public function setGender($gender)
     {
@@ -180,7 +181,7 @@ class Employee
      *
      * @param integer $age
      *
-     * @return Employee
+     * @return Newbie
      */
     public function setAge($age)
     {
@@ -204,7 +205,7 @@ class Employee
      *
      * @param array $languages
      *
-     * @return Employee
+     * @return Newbie
      */
     public function setLanguages($languages)
     {
@@ -222,28 +223,5 @@ class Employee
     {
         return $this->languages;
     }
-
-    /**
-     * Set newbie
-     *
-     * @param \AppBundle\Entity\Newbie $newbie
-     *
-     * @return Employee
-     */
-    public function setNewbie(\AppBundle\Entity\Newbie $newbie = null)
-    {
-        $this->newbie = $newbie;
-
-        return $this;
-    }
-
-    /**
-     * Get newbie
-     *
-     * @return \AppBundle\Entity\Newbie
-     */
-    public function getNewbie()
-    {
-        return $this->newbie;
-    }
 }
+

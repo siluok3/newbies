@@ -8,33 +8,53 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Post;
+use AppBundle\Entity\Employee;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class FilterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $filters = ['nationality', 'languages', 'age', 'gender'];
 
         $builder
-            ->add('name')
-            ->add('filters', 'choice', [
-                'choices' => $filters,
-                'multiple' => true,
-                'expanded' => true
-            ]);
+            ->add('nationality', CheckboxType::class, array(
+                'mapped' => false,
+                'required' => false,
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
+            ))
+            ->add('age', CheckboxType::class, array(
+                'mapped' => false,
+                'required' => false,
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
+            ))
+            ->add('gender', CheckboxType::class, array(
+                'mapped' => false,
+                'required' => false,
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
+            ))
+            ->add('languages', CheckboxType::class, array(
+                'mapped' => false,
+                'required' => false,
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
+            ))
+            ->add('match', SubmitType::class, array(
+                'label' => 'Match',
+                'attr' => array('class' => 'btn btn-lg btn-success')
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => Post::class,
+            'data_class' => Employee::class,
         ));
     }
 

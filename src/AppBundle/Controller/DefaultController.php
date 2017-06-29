@@ -3,9 +3,11 @@
 namespace AppBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Id;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Form\FilterType;
 
 class DefaultController extends Controller
 {
@@ -44,33 +46,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/match_nationality", name="match_by_nationality")
-     */
-    public function matchByNationalityAction(EntityManagerInterface $em)
-    {
-
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
-
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, e.nationality
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
-
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
-
-        return $this->render('default/matchNationality.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies
-        ]);
-    }
-
-    /**
      * @Route("/match_languages", name="match_by_languages")
      */
     public function matchByLanguagesAction(EntityManagerInterface $em)
@@ -79,26 +54,30 @@ class DefaultController extends Controller
             'select e.languages from AppBundle:Employee e'
         );
         $employeeLanguages = $employeeLanguagesQuery->getArrayResult();
+        //print_r($employeeLanguages);
 
         $newbieLanguagesQuery = $em->createQuery(
             'select n.languages from AppBundle:Newbie n'
         );
         $newbieLanguages = $newbieLanguagesQuery->getArrayResult();
+        //print_r($newbieLanguages);
 
         $employeesQuery = $em->createQuery(
             'SELECT e.firstname, e.lastname, e.languages
             FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WHERE e.languages IN (:languages)'
+            LEFT JOIN AppBundle:Newbie n WHERE e.languages IN (:languages)'
         )->setParameter('languages', $newbieLanguages);
 
         $newbiesQuery = $em->createQuery(
             'SELECT n.firstname, n.lastname, n.languages
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WHERE n.languages IN (:languages)'
-        )->setParameter('languages', $employeeLanguages);;
+            FROM AppBundle:Newbie n
+            LEFT JOIN AppBundle:Employee e WHERE n.languages IN (:languages)'
+        )->setParameter('languages', $employeeLanguages);
 
         $employees = $employeesQuery->getResult();
+        //print_r($employees);
         $newbies = $newbiesQuery->getResult();
+        //print_r($newbies);
 
         return $this->render('default/matchLanguages.html.twig', [
             'employees' => $employees,
@@ -107,108 +86,233 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/match_age", name="match_by_age")
+     * @Route("/match", name="match")
      */
-    public function matchByAgeAction(EntityManagerInterface $em)
+    public function matchAction(EntityManagerInterface $em, Request $request)
     {
+        $employees = $em->getRepository('AppBundle:Employee')
+            ->filterAllEmployees();
 
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
+        $newbies = $em->getRepository('AppBundle:Newbie')
+            ->filterAllNewbies();
 
+        $form = $this->createForm(FilterType::class);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
 
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
+            $nationality = $form->get('nationality')->getData();
+            $age = $form->get('age')->getData();
+            $gender =$form->get('gender')->getData();
+            $languages = $form->get('languages')->getData();
 
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
+            if($this->getAllConditions($age,$gender,$nationality,$languages)){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllEmployees();
 
-        return $this->render('default/matchAge.html.twig', [
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllNewbies();
+            }
+            else if($age == true && $gender == true && $nationality == false && $languages == true){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButNationalityEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButNationalityNewbies();
+            }
+
+            else if($age == true && $gender == false && $nationality == true && $languages == true){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButGenderEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButGenderNewbies();
+            }
+
+            else if($age == false && $gender == true && $nationality == true && $languages == true){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButAgeEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButAgeNewbies();
+            }
+
+            else if($age == true && $gender == true && $nationality == true && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterAllButLanguagesEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterAllButLanguagesNewbies();
+            }
+
+            else if($age == true && $gender == false && $nationality == true && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterByNationalityAndAgeEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterByNationalityAndAgeNewbies();
+            }
+
+            else if($age == false && $gender == true && $nationality == true && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterByNationalityAndGenderEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterByNationalityAndGenderNewbies();
+            }
+
+            else if($age == true && $gender == true && $nationality == false && $languages == false){
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterByAgeAndGenderEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterByAgeAndGenderNewbies();
+            }
+
+            else if($age == true && $gender == false && $nationality == false && $languages == false) {
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterOnlyByAgeEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterOnlyByAgeNewbies();
+            }
+
+            else if($age == false && $gender == true && $nationality == false && $languages == false) {
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterOnlyByGenderEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterOnlyByGenderNewbies();
+            }
+
+            else if($age == false && $gender == false && $nationality == true && $languages == false) {
+                $employees = $em->getRepository('AppBundle:Employee')
+                    ->filterOnlyByNationalityEmployees();
+
+                $newbies = $em->getRepository('AppBundle:Newbie')
+                    ->filterOnlyByNationalityNewbies();
+            }
+        }
+        $success = 'Filters where applied!';
+
+        return $this->render('default/match.html.twig', [
             'employees' => $employees,
-            'newbies' => $newbies
+            'newbies' => $newbies,
+            'form' => $form->createView(),
+            'success' => $success
         ]);
     }
 
     /**
-     * @Route("/match", name="match")
+     * @Route("/match_debug", name="match_debug_route")
      */
-    public function matchAction(EntityManagerInterface $em)
+    public function matchDebugAction(EntityManagerInterface $em, Request $request)
     {
+        $employees = $em->getRepository('AppBundle:Employee')
+            ->filterAllEmployees();
 
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality, e.age, e.gender
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age OR e.nationality = n.nationality OR e.gender = n.gender'
-        )->setParameter('age', 5);
+        $newbies = $em->getRepository('AppBundle:Newbie')
+            ->filterAllNewbies();
 
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.nationality, n.age, n.gender
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age OR e.nationality = n.nationality OR e.gender = n.gender'
-        )->setParameter('age', 5);
+        $form = $this->createForm(FilterType::class);
+        $form->handleRequest($request);
 
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
+        if ($form->isSubmitted() && $form->isValid()) {
 
-        return $this->render('default/match.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies
-        ]);
-    }
+            $nationality = $form->get('nationality')->getData();
+            $age = $form->get('age')->getData();
+            $gender = $form->get('gender')->getData();
+            //$languages = $form->get('languages')->getData();
 
-    public function filterByNationalityAction(EntityManagerInterface $em) {
+            $employees = $em->getRepository('AppBundle:Employee')
+                ->findByEmployee($nationality, $age, $gender);
 
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.nationality, e.gender, e.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
+            $newbies = $em->getRepository('AppBundle:Newbie')
+                ->findByNewbie($nationality, $age, $gender);
+        }
 
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, e.nationality, n.gender, n.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-        );
-
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
+        $success = 'Filters where applied!';
 
         return $this->render('default/match.html.twig', [
             'employees' => $employees,
-            'newbies' => $newbies
+            'newbies' => $newbies,
+            'form' => $form->createView(),
+            'success' => $success
         ]);
-
     }
 
-    public function filterByAgeAction(EntityManagerInterface $em) {
+    /**
+     * @Route("/match_debug_age", name="match_debug_age")
+     */
+    public function matchDebugAgeAction(EntityManagerInterface $em, Request $request)
+    {
+        $employees = $em->getRepository('AppBundle:Employee')
+            ->filterAllEmployees();
 
-        $employeesQuery = $em->createQuery(
-            'SELECT e.firstname, e.lastname, e.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
+        $newbies = $em->getRepository('AppBundle:Newbie')
+            ->filterAllNewbies();
 
+        $form = $this->createForm(FilterType::class);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
 
-        $newbiesQuery = $em->createQuery(
-            'SELECT n.firstname, n.lastname, n.age
-            FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-        )->setParameter('age', 5);
+            $nationality = $form->get('nationality')->getData();
+            $age = $form->get('age')->getData();
+            $gender = $form->get('gender')->getData();
+            $languages = $form->get('languages')->getData();
 
-        $employees = $employeesQuery->getResult();
-        $newbies = $newbiesQuery->getResult();
+            $matchingCondition = ' ';
 
-        return $this->render('default/matchAge.html.twig', [
+            if ($age == true) {
+                $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
+            }
+
+            if ($nationality == true) {
+                $matchingCondition .= ' e.nationality = n.nationality ';
+            }
+
+            if ($gender == true) {
+                $matchingCondition .= ' e.gender = n.gender ';
+            }
+
+            if ($languages == true){
+
+                $joinLanguagesQuery= $em->createQuery(
+                    'select e.languages from AppBundle:Employee e'
+                );
+                $languagesQuery = $joinLanguagesQuery->getArrayResult();
+
+                $matchingCondition .= ' (n.languages IN e.languages) ';
+            }
+
+            $qb = $em->createQueryBuilder();
+            $qb->select('e')
+                ->from('AppBundle:Newbie', 'n')
+                ->innerjoin('AppBundle:Employee', 'e', 'WHERE', $matchingCondition );
+            $query = $qb->getQuery();
+            $employees = $query->getResult();
+
+            $qb2 = $em->createQueryBuilder();
+            $qb2->select('n')
+                ->from('AppBundle:Newbie', 'n')
+                ->innerjoin('AppBundle:Employee', 'e', 'WHERE', $matchingCondition );
+            $query2 = $qb2->getQuery();
+            $newbies = $query2->getResult();
+        }
+
+        $success = 'Filters where applied!';
+
+        return $this->render('default/debug.html.twig', [
             'employees' => $employees,
-            'newbies' => $newbies
+            'newbies' => $newbies,
+            'form' => $form->createView(),
+            'success' => $success
         ]);
     }
 
+    private function getAllConditions($age,$gender,$nationality,$languages)
+    {
+        return $age == true && $gender == true && $nationality == true && $languages == true;
+    }
 }
