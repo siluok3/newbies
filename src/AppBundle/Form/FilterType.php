@@ -24,24 +24,31 @@ class FilterType extends AbstractType
             ->add('nationality', CheckboxType::class, array(
                 'mapped' => false,
                 'required' => false,
-                'data' => true
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
             ))
             ->add('age', CheckboxType::class, array(
                 'mapped' => false,
                 'required' => false,
-                'data' => true
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
             ))
             ->add('gender', CheckboxType::class, array(
                 'mapped' => false,
                 'required' => false,
-                'data' => true
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
             ))
             ->add('languages', CheckboxType::class, array(
                 'mapped' => false,
                 'required' => false,
-                'data' => true
+                'data' => true,
+                'attr' => array('class' => 'checkbox-inline')
             ))
-            ->add('match', SubmitType::class);
+            ->add('match', SubmitType::class, array(
+                'label' => 'Match',
+                'attr' => array('class' => 'btn btn-lg btn-success')
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

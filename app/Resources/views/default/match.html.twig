@@ -1,5 +1,6 @@
 {% extends '::base.html.twig' %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{# {% form_theme form 'form/checkboxes.html.twig' %} #}
 
 {% block body %}
     <div class="alert alert-success">
@@ -57,14 +58,12 @@
             </tr>
             {% endfor %}
         </table>
-            <div class="form-group">
-                {{ form_start(form) }}
-                <div class="col-xs-6">
-                    {{ form_widget(form) }}
-                </div>
-                {{ form_end(form) }}
-            </div>
     </div>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+
     <script>
         window.setTimeout(function() {
             $(".alert-success").fadeTo(300, 0).slideUp(500, function(){

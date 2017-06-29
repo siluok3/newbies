@@ -63,6 +63,12 @@ class Newbie
      */
     private $languages;
 
+    /**
+     * @ORM\OneToOne(targetEntity = "Employee", inversedBy="newbie")
+     * @ORM\JoinColumn(name="employee_id", referencedColumnName = "id")
+     */
+    private $employee;
+
 
     /**
      * Get id
@@ -217,5 +223,28 @@ class Newbie
     {
         return $this->languages;
     }
-}
 
+    /**
+     * Set employee
+     *
+     * @param \AppBundle\Entity\Employee $employee
+     *
+     * @return Newbie
+     */
+    public function setEmployee(\AppBundle\Entity\Employee $employee = null)
+    {
+        $this->employee = $employee;
+
+        return $this;
+    }
+
+    /**
+     * Get employee
+     *
+     * @return \AppBundle\Entity\Employee
+     */
+    public function getEmployee()
+    {
+        return $this->employee;
+    }
+}

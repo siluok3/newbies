@@ -13,38 +13,53 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class MatchRepository extends EntityRepository
 {
-    public function match(MatchingRequirements $matchingRequirements)
+    public function findByEmployee($nationality, $age, $gender)
     {
-        $matchingCondition = 'mydefaultcondition';
+        $matchingCondition = '';
 
-        if (!is_null($matchingRequirements->getAge())) {
+        if ($age == true) {
             $matchingCondition .= 'ON e.age = n.age';
         }
 
-        if (!is_null($matchingRequirements->getNationality())) {
+        if ($nationality == true) {
             $matchingCondition .= 'ON e.nationality = n.nationality';
         }
 
-        if (!is_null($matchingRequirements->getGender())) {
+        if ($gender == true) {
             $matchingCondition .= 'ON abs(e.age-n.age) <= 5';
         }
 
-        $qbEmployee = $this->createQueryBuilder();
+        $qbEmployee = $this->createQueryBuilder('e');
         $qbEmployee->select('e')
-            ->from('Employee', 'e')
-            ->join('Newbie', 'n', Join::WITH, $matchingCondition);
+            ->from('AppBundle:Employee', 'e')
+            ->join('AppBundle:Newbie', 'n', Join::WITH, $matchingCondition);
 
-        $qbNewbie = $this->createQueryBuilder();
+        return $qbEmployee->getQuery()->execute();
+
+    }
+
+    public function findByNewbie($nationality, $age, $gender)
+    {
+        $matchingCondition = '';
+
+        if ($age == true) {
+            $matchingCondition .= 'ON e.age = n.age';
+        }
+
+        if ($nationality == true) {
+            $matchingCondition .= 'ON e.nationality = n.nationality';
+        }
+
+        if ($gender == true) {
+            $matchingCondition .= 'ON abs(e.age-n.age) <= 5';
+        }
+
+        $qbNewbie = $this->createQueryBuilder('n');
         $qbNewbie->select('n')
-            ->from('Newbie', 'n')
-            ->join('Employee', 'e', Join::WITH, $matchingCondition);
+            ->from('AppBundle:Newbie', 'n')
+            ->join('AppBundle:Employee', 'e', Join::WITH, $matchingCondition);
 
-        $resultEmployee = $qbEmployee->getResult();
-        $resultNewbie = $qbNewbie->getResult();
+        return $qbNewbie->getQuery()->execute();
 
-        return [
-            'employees' => $resultEmployee,
-            'newbies' => $resultNewbie
-        ];
     }
 }
