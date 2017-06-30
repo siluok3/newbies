@@ -170,4 +170,39 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
                     JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
             )->getResult();
     }
+
+    public function filterByNewbie($age, $nationality, $languages, $gender) {
+
+        $matchingCondition = ' ';
+        $and = ' AND ';
+        $flag = 0;
+
+        if ($age == true) {
+            $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
+            $flag++;
+        }
+
+        if ($nationality == true) {
+            if($flag == 0) $matchingCondition .= ' e.nationality = n.nationality ';
+            else $matchingCondition .= ' AND e.nationality = n.nationality';
+            $flag++;
+        }
+
+        if ($gender == true) {
+            if($flag == 0) $matchingCondition .= ' e.gender = n.gender ';
+            else $matchingCondition .= ' AND e.gender = n.gender ';
+            $flag++;
+        }
+
+        if ($languages == true){
+            if($flag == 0) $matchingCondition .= ' n.languages = e.languages ';
+            else $matchingCondition .= ' AND n.languages = e.languages ';
+        }
+
+        return $this->createQueryBuilder('n')
+            ->select('n')
+            ->join('AppBundle:Employee', 'e', 'WHERE', $matchingCondition )
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

@@ -14,3 +14,12 @@ body {
 #form {
     position: relative;
 }
+
+.row {
+    padding-top: 15px;
+    padding-left: 1pc;
+}
+
+h2 {
+    margin-left: 20px!important;
+}

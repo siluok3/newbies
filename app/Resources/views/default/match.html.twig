@@ -1,12 +1,21 @@
 {% extends '::base.html.twig' %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-{# {% form_theme form 'form/checkboxes.html.twig' %} #}
+{#{% form_theme form 'form/checkboxes.html.twig' %}#}
 
 {% block body %}
     <div class="alert alert-success">
         <strong>{{ success }}</strong>
     </div>
-    <h3>Matches</h3>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-md-1">{{ form_widget(form.nationality) }}</div>
+        <div class="col-md-1">{{ form_widget(form.age) }}</div>
+        <div class="col-md-1">{{ form_widget(form.gender) }}</div>
+        <div class="col-md-1">{{ form_widget(form.languages) }}</div>
+        <div class="col-md-1">{{ form_widget(form.match) }}</div>
+    </div>
+    {{ form_end(form) }}
+    <p class="h2"><h2>Matches</h2></p>
     <div class="table-responsive col-md-6">
         <table class="table" style="float: left">
             <tr>
@@ -59,11 +68,6 @@
             {% endfor %}
         </table>
     </div>
-
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    {{ form_end(form) }}
-
     <script>
         window.setTimeout(function() {
             $(".alert-success").fadeTo(300, 0).slideUp(500, function(){
