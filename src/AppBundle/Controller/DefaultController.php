@@ -85,6 +85,7 @@ class DefaultController extends Controller
         ]);
     }
 
+
     /**
      * @Route("/match", name="match")
      */
@@ -203,113 +204,6 @@ class DefaultController extends Controller
         ]);
     }
 
-    /**
-     * @Route("/match_debug", name="match_debug_route")
-     */
-    public function matchDebugAction(EntityManagerInterface $em, Request $request)
-    {
-        $employees = $em->getRepository('AppBundle:Employee')
-            ->filterAllEmployees();
-
-        $newbies = $em->getRepository('AppBundle:Newbie')
-            ->filterAllNewbies();
-
-        $form = $this->createForm(FilterType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $nationality = $form->get('nationality')->getData();
-            $age = $form->get('age')->getData();
-            $gender = $form->get('gender')->getData();
-            //$languages = $form->get('languages')->getData();
-
-            $employees = $em->getRepository('AppBundle:Employee')
-                ->findByEmployee($nationality, $age, $gender);
-
-            $newbies = $em->getRepository('AppBundle:Newbie')
-                ->findByNewbie($nationality, $age, $gender);
-        }
-
-        $success = 'Filters where applied!';
-
-        return $this->render('default/match.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies,
-            'form' => $form->createView(),
-            'success' => $success
-        ]);
-    }
-
-    /**
-     * @Route("/match_debug_age", name="match_debug_age")
-     */
-    public function matchDebugAgeAction(EntityManagerInterface $em, Request $request)
-    {
-        $employees = $em->getRepository('AppBundle:Employee')
-            ->filterAllEmployees();
-
-        $newbies = $em->getRepository('AppBundle:Newbie')
-            ->filterAllNewbies();
-
-        $form = $this->createForm(FilterType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $nationality = $form->get('nationality')->getData();
-            $age = $form->get('age')->getData();
-            $gender = $form->get('gender')->getData();
-            $languages = $form->get('languages')->getData();
-
-            $matchingCondition = ' ';
-
-            if ($age == true) {
-                $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
-            }
-
-            if ($nationality == true) {
-                $matchingCondition .= ' e.nationality = n.nationality ';
-            }
-
-            if ($gender == true) {
-                $matchingCondition .= ' e.gender = n.gender ';
-            }
-
-            if ($languages == true){
-
-                $joinLanguagesQuery= $em->createQuery(
-                    'select e.languages from AppBundle:Employee e'
-                );
-                $languagesQuery = $joinLanguagesQuery->getArrayResult();
-
-                $matchingCondition .= ' (n.languages IN e.languages) ';
-            }
-
-            $qb = $em->createQueryBuilder();
-            $qb->select('e')
-                ->from('AppBundle:Newbie', 'n')
-                ->innerjoin('AppBundle:Employee', 'e', 'WHERE', $matchingCondition );
-            $query = $qb->getQuery();
-            $employees = $query->getResult();
-
-            $qb2 = $em->createQueryBuilder();
-            $qb2->select('n')
-                ->from('AppBundle:Newbie', 'n')
-                ->innerjoin('AppBundle:Employee', 'e', 'WHERE', $matchingCondition );
-            $query2 = $qb2->getQuery();
-            $newbies = $query2->getResult();
-        }
-
-        $success = 'Filters where applied!';
-
-        return $this->render('default/debug.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies,
-            'form' => $form->createView(),
-            'success' => $success
-        ]);
-    }
 
     private function getAllConditions($age,$gender,$nationality,$languages)
     {

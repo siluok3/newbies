@@ -25,13 +25,13 @@ class FilterType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'data' => true,
-                'attr' => array('class' => 'checkbox-inline')
+                'attr' => array('class' => 'checkbox-inline'),
             ))
             ->add('age', CheckboxType::class, array(
                 'mapped' => false,
                 'required' => false,
                 'data' => true,
-                'attr' => array('class' => 'checkbox-inline')
+                'attr' => array('class' => 'checkbox-inline'),
             ))
             ->add('gender', CheckboxType::class, array(
                 'mapped' => false,
