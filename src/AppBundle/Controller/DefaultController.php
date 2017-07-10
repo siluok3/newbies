@@ -38,11 +38,75 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-
         return $this->render('default/index.html.twig');
 
+    }
+
+    /**
+     * @Route("/match_age", name="match_age")
+     */
+    public function matchDebugAgeAction(EntityManagerInterface $em, Request $request)
+    {
+        $employees = $em->getRepository('AppBundle:Employee')
+            ->filterAllEmployees();
+
+        $newbies = $em->getRepository('AppBundle:Newbie')
+            ->filterAllNewbies();
+
+        $form = $this->createForm(FilterType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $nationality = $form->get('nationality')->getData();
+            $age = $form->get('age')->getData();
+            $gender = $form->get('gender')->getData();
+            $languages = $form->get('languages')->getData();
+
+            $employees = $em->getRepository('AppBundle:Employee')
+                ->filterByEmployee($age, $nationality, $languages, $gender);
+            $newbies = $em->getRepository('AppBundle:Newbie')
+                ->filterByNewbie($age, $nationality, $languages, $gender);
+        }
+
+        $success = 'Filters where applied!';
+
+        //Array that saves the times each Newbie is appearing in the table
+        $result = $this->elementsArray($newbies);
+        print_r($result);
+
+        //Distinct Results on the newbies array
+        //$input = array_map("unserialize", array_unique(array_map("serialize", $newbies)));
+
+        return $this->render('default/matchAge.html.twig', [
+            'employees' => $employees,
+            'newbies' => $newbies,
+            'form' => $form->createView(),
+            'success' => $success
+        ]);
+    }
+
+    //Function to count how many times a newbie is returned when matched with different employees
+    public function elementsArray($rows) {
+
+        $lastname = '';
+        $times = 1;
+        $array = array();
+
+        foreach($rows as $row) {
+            if($row['lastname'] == $lastname) {
+                $times++;
+            }
+            else {
+                array_push($array, $times);
+                $lastname = $row['lastname'];
+                $times =1;
+            }
+        }
+        unset($array[0]);
+        return $array;
     }
 
     /**

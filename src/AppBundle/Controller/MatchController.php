@@ -48,11 +48,11 @@ class MatchController extends Controller
         $success = 'Filters where applied!';
 
         //Array that saves the times each Newbie is appearing in the table
-        $result = $this->elementsArray($newbies);
-        print_r($result);
+        //$result = $this->elementsArray($newbies);
+        //print_r($result);
 
         //Distinct Results on the newbies array
-        //$input = array_map("unserialize", array_unique(array_map("serialize", $newbies)));
+        //$distinctNewbies = array_map("unserialize", array_unique(array_map("serialize", $newbies)));
 
         return $this->render('default/match.html.twig', [
             'employees' => $employees,
@@ -62,6 +62,7 @@ class MatchController extends Controller
         ]);
     }
 
+    //Function to count how many times a newbie is returned when matched with different employees
     public function elementsArray($rows) {
 
         $lastname = '';

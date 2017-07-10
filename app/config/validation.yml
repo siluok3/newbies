@@ -1,0 +1,3 @@
+App\Bundle\Entity\Employee:
+    constraints:
+        - Callback: checkboxesValidation

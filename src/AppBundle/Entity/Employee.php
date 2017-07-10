@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Employee
@@ -246,4 +248,18 @@ class Employee
     {
         return $this->newbie;
     }
+
+    /**
+     * @param ExecutionContextInterface $context
+     * @Assert\Callback
+     */
+    public function checkboxValidation(ExecutionContextInterface $context, $payload) {
+
+        if($this->age == false && $this->gender == false && $this->nationality == false && $this->languages == false) {
+            $context->buildViolation('Check something you idiot!')
+                ->atPath('gender')
+                ->addViolation();
+        }
+    }
+
 }

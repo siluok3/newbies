@@ -29,11 +29,6 @@
             <tr>
                 <td>{{ employee.firstname }} {{ employee.lastname }}</td>
                 <td>{{ employee.nationality }}</td>
-                {#{% if employee.gender is same as(0) %}
-                    <td>Male</td>
-                {% else %}
-                    <td>Female</td>
-                {% endif %} #}
                 <td>{{ employee.gender|genderDecision }}</td>
                 <td>{{ employee.age }}</td>
                 {% for key, language in employee.languages %}
@@ -56,11 +51,6 @@
             <tr>
                 <td>{{ newbie.firstname }} {{ newbie.lastname }}</td>
                 <td>{{ newbie.nationality }}</td>
-                {#{% if newbie.gender is same as(0) %}
-                    <td>Male</td>
-                {% else %}
-                    <td>Female</td>
-                {% endif %} #}
                 <td>{{ newbie.gender|genderDecision }}</td>
                 <td>{{ newbie.age }}</td>
                 {% for key, language in newbie.languages %}

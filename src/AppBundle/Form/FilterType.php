@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Validator\Constraints\IsTrue;
 
 class FilterType extends AbstractType
 {
@@ -22,28 +23,20 @@ class FilterType extends AbstractType
 
         $builder
             ->add('nationality', CheckboxType::class, array(
-                'mapped' => false,
                 'required' => false,
                 'data' => true,
-                'attr' => array('class' => 'checkbox-inline'),
             ))
             ->add('age', CheckboxType::class, array(
-                'mapped' => false,
                 'required' => false,
                 'data' => true,
-                'attr' => array('class' => 'checkbox-inline'),
             ))
             ->add('gender', CheckboxType::class, array(
-                'mapped' => false,
                 'required' => false,
                 'data' => true,
-                'attr' => array('class' => 'checkbox-inline')
             ))
             ->add('languages', CheckboxType::class, array(
-                'mapped' => false,
                 'required' => false,
                 'data' => true,
-                'attr' => array('class' => 'checkbox-inline')
             ))
             ->add('match', SubmitType::class, array(
                 'label' => 'Match',

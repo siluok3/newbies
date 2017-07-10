@@ -11,171 +11,25 @@ use Doctrine\ORM\EntityRepository;
  */
 class EmployeeRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function filterByNationalityEmployees($nationality)
-    {
-        if($nationality == true)
-        {
-            return $this->getEntityManager()
-                ->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.nationality=n.nationality'
-                )
-                ->getResult();
-        }
-    }
-
-    public function filterByAgeEmployees($age)
-    {
-        if($age == true) {
-            return $this->getEntityManager()
-                ->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                      FROM AppBundle:Employee e
-                      JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-                )->setParameter('age', 5)
-                ->getResult();
-        }
-    }
-
-    public function filterByGenderEmployees($gender)
-    {
-        if($gender == true)
-        {
-            return $this->getEntityManager()
-                ->createQuery(
-                    'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender=n.gender'
-                )
-                ->getResult();
-        }
-    }
-
     public function filterAllEmployees()
     {
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT e.firstname, e.lastname, e.nationality, e.age, e.gender, e.languages
             FROM AppBundle:Employee e
-            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender'
+            JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality AND e.gender = n.gender AND e.languages=n.languages'
             )->setParameter('age', 5)
             ->getResult();
-    }
-
-    public function filterAllButNationalityEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.gender = n.gender'
-            )->setParameter('age', 5)
-            ->getResult();
-    }
-
-    public function filterAllButGenderEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality'
-            )->setParameter('age', 5)
-            ->getResult();
-    }
-
-    public function filterAllButAgeEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender = n.gender AND e.nationality = n.nationality'
-            )
-            ->getResult();
-    }
-
-    public function filterAllButLanguagesEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender = n.gender AND e.nationality = n.nationality and abs(e.age-n.age)<:age'
-            )->setParameter('age', 5)
-            ->getResult();
-    }
-
-    public function filterByNationalityAndAgeEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age AND e.nationality = n.nationality'
-            )->setParameter('age', 5)
-            ->getResult();
-    }
-
-    public function filterByNationalityAndGenderEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender = n.gender AND e.nationality = n.nationality'
-            )
-            ->getResult();
-    }
-
-    public function filterByAgeAndGenderEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Newbie n
-                    JOIN AppBundle:Employee e WITH abs(e.age-n.age)<:age AND e.gender = n.gender'
-            )->setParameter('age', 5)
-            ->getResult();
-    }
-
-    public function filterOnlyByAgeEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH abs(e.age-n.age)<:age'
-            )->setParameter('age', 5)
-            ->getResult();
-    }
-
-    public function filterOnlyByGenderEmployees()
-    {
-         return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.gender = n.gender'
-            )->getArrayResult();
-    }
-
-    public function filterOnlyByNationalityEmployees()
-    {
-        return $this->getEntityManager()
-            ->createQuery(
-                'SELECT e.firstname, e.lastname, e.age, e.nationality, e.gender, e.languages
-                    FROM AppBundle:Employee e
-                    JOIN AppBundle:Newbie n WITH e.nationality = n.nationality'
-            )->getResult();
     }
 
     public function filterByEmployee($age, $nationality, $languages, $gender) {
 
         $matchingCondition = ' ';
-        $and = ' AND ';
         $flag = 0;
+
+        if($nationality == false && $age == false && $gender == false && $languages ==false) {
+            echo "All are empty";
+        }
 
         if ($age == true) {
             $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
@@ -199,11 +53,14 @@ class EmployeeRepository extends \Doctrine\ORM\EntityRepository
             else $matchingCondition .= ' AND n.languages = e.languages ';
         }
 
-        return $this->createQueryBuilder('e')
+        //With getResult() we get the distinct number of the matches, so one match for the available employees
+        //With getArrayResult() we get all the possible results for a single Newbie
+        $qb =$this->createQueryBuilder('e')
             ->select('e')
-            ->join('AppBundle:Newbie', 'n', 'WHERE', $matchingCondition )
+            ->join('AppBundle:Newbie', 'n', 'WITH', $matchingCondition )
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
 
+        return $qb;
     }
 }
