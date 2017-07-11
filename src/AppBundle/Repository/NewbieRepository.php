@@ -66,7 +66,7 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
         $flag = 0;
 
         if ($age == true) {
-            $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
+            $matchingCondition .= ' (ABS(e.age-n.age) <= 5) ';
             $flag++;
         }
 

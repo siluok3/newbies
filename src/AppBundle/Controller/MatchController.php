@@ -73,11 +73,11 @@ class MatchController extends Controller
                 ->filterJoinedNewbie($age, $nationality, $languages, $gender);
         }
 
-        $success = 'Filters where applied!';
+        $success = 'Filters were applied!';
 
-        //print_r($newbies);
+        //var_dump($newbies);
 
-        return $this->render('default/joined.html.twig', [
+        return $this->render('default/debug.html.twig', [
             'newbies' => $newbies,
             'form' => $form->createView(),
             'success' => $success
