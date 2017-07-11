@@ -23,11 +23,12 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
 
     public function filterByNewbie($age, $nationality, $languages, $gender) {
 
-        $matchingCondition = ' ';
+        $matchingCondition = '';
         $flag = 0;
 
         if ($age == true) {
-            $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
+            if($flag == 0) $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
+            else $matchingCondition = ' AND abs(e.age-n.age) <= 5 ';
             $flag++;
         }
 
@@ -37,22 +38,22 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
             $flag++;
         }
 
-        if ($gender == true) {
-            if($flag == 0) $matchingCondition .= ' e.gender = n.gender ';
-            else $matchingCondition .= ' AND e.gender = n.gender ';
-            $flag++;
-        }
-
         if ($languages == true){
             if($flag == 0) $matchingCondition .= ' n.languages = e.languages ';
             else $matchingCondition .= ' AND n.languages = e.languages ';
         }
 
+        if ($gender == true) {
+            if($flag == 0) $matchingCondition .= ' e.gender = n.gender ';
+            else $matchingCondition .= ' AND e.gender = n.gender ';
+            //$flag++;
+        }
+
         //With getResult() we get the distinct number of the matches, so one match for the available employees
         //With getArrayResult() we get all the possible results for a single Newbie
         $qb = $this->createQueryBuilder('n')
-            ->select('n')
-            ->join('AppBundle:Employee', 'e', 'WITH', $matchingCondition )
+            ->select('n,e')
+            ->leftjoin('AppBundle:Employee', 'e', 'WITH', $matchingCondition )
             ->getQuery()
             ->getResult();
 
