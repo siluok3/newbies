@@ -247,4 +247,17 @@ class Newbie
     {
         return $this->employee;
     }
+
+    /**
+     * @param ExecutionContextInterface $context
+     * @Assert\Callback
+     */
+    public function checkboxValidation(ExecutionContextInterface $context) {
+
+        if($this->age == false && $this->gender == false && $this->nationality == false && $this->languages == false) {
+            $context->buildViolation('Check something you idiot!')
+                ->atPath('gender')
+                ->addViolation();
+        }
+    }
 }

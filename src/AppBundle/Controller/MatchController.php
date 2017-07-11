@@ -17,6 +17,72 @@ use AppBundle\Form\FilterType;
 
 class MatchController extends Controller
 {
+    /**
+     * @Route("/newbies", name="newbies_list")
+     */
+    public function listNewbiesAction()
+    {;
+        $newbies = $this->getDoctrine()->getRepository('AppBundle:Newbie')->findAll();
+
+        return $this->render('newbie/list.html.twig', [
+            'newbies' => $newbies
+        ]);
+    }
+
+    /**
+     * @Route("/employees", name="employees_list")
+     */
+    public function listEmployeesAction()
+    {
+        $employees = $this->getDoctrine()->getRepository('AppBundle:Employee')->findAll();
+
+        return $this->render('employee/list.html.twig', [
+            'employees' => $employees
+        ]);
+    }
+
+    /**
+     * @Route("/", name="homepage")
+     */
+    public function indexAction(Request $request)
+    {
+        return $this->render('default/index.html.twig');
+
+    }
+
+
+    /**
+     * @Route("/joined", name="joined")
+     */
+    public function matchJoinAction(EntityManagerInterface $em, Request $request) {
+
+        $newbies = $em->getRepository('AppBundle:Newbie')
+            ->filterAllJoinedNewbies();
+
+        $form = $this->createForm(FilterType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $nationality = $form->get('nationality')->getData();
+            $age = $form->get('age')->getData();
+            $gender = $form->get('gender')->getData();
+            $languages = $form->get('languages')->getData();
+
+            $newbies = $em->getRepository('AppBundle:Newbie')
+                ->filterJoinedNewbie($age, $nationality, $languages, $gender);
+        }
+
+        $success = 'Filters where applied!';
+
+        //print_r($newbies);
+
+        return $this->render('default/joined.html.twig', [
+            'newbies' => $newbies,
+            'form' => $form->createView(),
+            'success' => $success
+        ]);
+    }
 
     /**
      * @Route("/dynamic_match", name="dynamic_match")
@@ -82,5 +148,4 @@ class MatchController extends Controller
         unset($array[0]);
         return $array;
     }
-
 }

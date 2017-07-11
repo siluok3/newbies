@@ -12,39 +12,6 @@ use AppBundle\Form\FilterType;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/newbies", name="newbies_list")
-     */
-    public function listNewbiesAction()
-    {;
-        $newbies = $this->getDoctrine()->getRepository('AppBundle:Newbie')->findAll();
-
-        return $this->render('newbie/list.html.twig', [
-            'newbies' => $newbies
-        ]);
-    }
-
-    /**
-     * @Route("/employees", name="employees_list")
-     */
-    public function listEmployeesAction()
-    {
-        $employees = $this->getDoctrine()->getRepository('AppBundle:Employee')->findAll();
-
-        return $this->render('employee/list.html.twig', [
-            'employees' => $employees
-        ]);
-    }
-
-    /**
-     * @Route("/", name="homepage")
-     */
-    public function indexAction(Request $request)
-    {
-        return $this->render('default/index.html.twig');
-
-    }
-
-    /**
      * @Route("/match_age", name="match_age")
      */
     public function matchDebugAgeAction(EntityManagerInterface $em, Request $request)

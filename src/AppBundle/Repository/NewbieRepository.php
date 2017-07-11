@@ -58,4 +58,53 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
 
         return $qb;
     }
+
+    public function filterJoinedNewbie($age, $nationality, $languages, $gender) {
+
+        $matchingCondition = ' ';
+        $flag = 0;
+
+        if ($age == true) {
+            $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
+            $flag++;
+        }
+
+        if ($gender == true) {
+            if($flag == 0) $matchingCondition .= ' e.gender = n.gender ';
+            else $matchingCondition .= ' AND e.gender = n.gender ';
+            $flag++;
+        }
+
+        if ($nationality == true) {
+            if($flag == 0) $matchingCondition .= ' n.nationality = e.nationality ';
+            else $matchingCondition .= ' AND n.nationality = e.nationality';
+            $flag++;
+        }
+
+        if ($languages == true){
+            if($flag == 0) $matchingCondition .= ' n.languages = e.languages ';
+            else $matchingCondition .= ' AND n.languages = e.languages ';
+        }
+
+        //With getResult() we get the distinct number of the matches, so one match for the available employees
+        //With getArrayResult() we get all the possible results for a single Newbie
+        $qb = $this->createQueryBuilder('n')
+            ->select('e,n')
+            ->leftJoin('AppBundle:Employee', 'e', 'WITH', $matchingCondition )
+            ->getQuery()
+            ->getResult();
+
+        return $qb;
+    }
+
+    public function filterAllJoinedNewbies() {
+
+        $qb = $this->createQueryBuilder('n')
+            ->select('e,n')
+            ->leftJoin('AppBundle:Employee', 'e', 'WITH', 'abs(e.age-n.age) <= 5 AND e.nationality = n.nationality AND e.gender = n.gender AND n.languages = e.languages' )
+            ->getQuery()
+            ->getResult();
+
+        return $qb;
+    }
 }
