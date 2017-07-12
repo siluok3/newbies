@@ -22,8 +22,8 @@ class EmployeeRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
-    public function filterJoinedEmployee($age, $nationality, $languages, $gender) {
-
+    public function filterJoinedEmployee($age, $nationality, $languages, $gender)
+    {
         $matchingCondition = ' ';
         $flag = 0;
 
@@ -49,8 +49,6 @@ class EmployeeRepository extends \Doctrine\ORM\EntityRepository
             else $matchingCondition .= ' AND n.languages = e.languages ';
         }
 
-        //With getResult() we get the distinct number of the matches, so one match for the available employees
-        //With getArrayResult() we get all the possible results for a single Newbie
         $qb =$this->createQueryBuilder('e')
             ->select('e,n')
             ->leftJoin('AppBundle:Newbie', 'n', 'WITH', $matchingCondition )
