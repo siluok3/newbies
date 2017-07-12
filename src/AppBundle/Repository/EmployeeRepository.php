@@ -52,6 +52,7 @@ class EmployeeRepository extends \Doctrine\ORM\EntityRepository
         $qb =$this->createQueryBuilder('e')
             ->select('e,n')
             ->leftJoin('AppBundle:Newbie', 'n', 'WITH', $matchingCondition )
+            ->groupBy('e.id')
             ->getQuery()
             ->getResult();
 

@@ -14,47 +14,4 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Employee extends Person
 {
-    /**
-     * @ORM\OneToMany(targetEntity="Newbie", mappedBy="employee")
-     */
-    private $newbie;
-
-
-    /**
-     * Set newbie
-     *
-     * @param \AppBundle\Entity\Newbie $newbie
-     *
-     * @return Employee
-     */
-    public function setNewbie(\AppBundle\Entity\Newbie $newbie = null)
-    {
-        $this->newbie = $newbie;
-
-        return $this;
-    }
-
-    /**
-     * Get newbie
-     *
-     * @return \AppBundle\Entity\Newbie
-     */
-    public function getNewbie()
-    {
-        return $this->newbie;
-    }
-
-    /**
-     * @param ExecutionContextInterface $context
-     * @Assert\Callback
-     */
-    /*public function checkboxValidation(ExecutionContextInterface $context, $payload) {
-
-        if($this->age == false && $this->gender == false && $this->nationality == false && $this->languages == false) {
-            $context->buildViolation('Check something you idiot!')
-                ->atPath('gender')
-                ->addViolation();
-        }
-    } */
-
 }
