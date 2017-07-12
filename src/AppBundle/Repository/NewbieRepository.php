@@ -90,7 +90,7 @@ class NewbieRepository extends \Doctrine\ORM\EntityRepository
         //With getResult() we get the distinct number of the matches, so one match for the available employees
         //With getArrayResult() we get all the possible results for a single Newbie
         $qb = $this->createQueryBuilder('n')
-            ->select('e,n')
+            ->select('e, n')
             ->leftJoin('AppBundle:Employee', 'e', 'WITH', $matchingCondition )
             ->getQuery()
             ->getResult();

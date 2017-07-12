@@ -24,11 +24,11 @@ class EmployeeController extends Controller
     public function createEmployeeAction(EntityManagerInterface $em)
     {
         $employee = new Employee();
-        $employee->setFirstname('Franz');
-        $employee->setLastname('Beckensbauer');
-        $employee->setNationality('German');
-        $employee->setGender(0);
-        $employee->setLanguages(array('german'));
+        $employee->setFirstname('Delilah');
+        $employee->setLastname('Akhbar');
+        $employee->setNationality('Arabian');
+        $employee->setGender(1);
+        $employee->setLanguages(array('english'));
         $employee->setAge(29);
 
         $em->persist($employee);

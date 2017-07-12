@@ -24,11 +24,12 @@ class NewbieController extends Controller
     public function createNewbieAction(EntityManagerInterface $em)
     {
         $newbie = new Newbie();
-        $newbie->setFirstname('Lof');
-        $newbie->setLastname('Pedersen');
-        $newbie->setNationality('Danish');
-        $newbie->setGender(0);
-        $newbie->setLanguages(array('english','danish'));
+        $newbie->setFirstname('Carla');
+        $newbie->setLastname('Llull');
+        $newbie->setNationality('Spanish');
+        $newbie->setGender(1);
+        $newbie->setLanguages(array('german','spanish'));
+        $newbie->setAge(23);
 
         $em->persist($newbie);
         $em->flush();
