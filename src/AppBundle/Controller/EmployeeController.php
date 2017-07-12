@@ -19,7 +19,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 class EmployeeController extends Controller
 {
     /**
+     * @param EntityManagerInterface $em
+     *
      * @Route("/create_employee", name="create_employee_route")
+     *
+     * @return Response
      */
     public function createEmployeeAction(EntityManagerInterface $em)
     {

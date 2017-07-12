@@ -18,10 +18,23 @@ use AppBundle\Form\FilterType;
 class MatchController extends Controller
 {
     /**
+     * @Route("/", name="homepage")
+     *
+     * @return view
+     */
+    public function indexAction()
+    {
+        return $this->render('default/index.html.twig');
+
+    }
+
+    /**
      * @Route("/newbies", name="newbies_list")
+     *
+     * @return newbies
      */
     public function listNewbiesAction()
-    {;
+    {
         $newbies = $this->getDoctrine()->getRepository('AppBundle:Newbie')->findAll();
 
         return $this->render('newbie/list.html.twig', [
@@ -31,6 +44,8 @@ class MatchController extends Controller
 
     /**
      * @Route("/employees", name="employees_list")
+     *
+     * @return employees
      */
     public function listEmployeesAction()
     {
@@ -42,20 +57,17 @@ class MatchController extends Controller
     }
 
     /**
-     * @Route("/", name="homepage")
-     */
-    public function indexAction(Request $request)
-    {
-        return $this->render('default/index.html.twig');
-
-    }
-
-
-    /**
+     * @param $em
+     * @param $request
+     *
      * @Route("/joined", name="joined")
+     *
+     * @return newbies
+     * @return form
+     * @return success
      */
-    public function matchJoinAction(EntityManagerInterface $em, Request $request) {
-
+    public function matchJoinAction(EntityManagerInterface $em, Request $request)
+    {
         $newbies = $em->getRepository('AppBundle:Newbie')
             ->filterAllJoinedNewbies();
 
@@ -77,7 +89,7 @@ class MatchController extends Controller
 
         //var_dump($newbies);
 
-        return $this->render('default/debug.html.twig', [
+        return $this->render('default/joined.html.twig', [
             'newbies' => $newbies,
             'form' => $form->createView(),
             'success' => $success
@@ -85,15 +97,19 @@ class MatchController extends Controller
     }
 
     /**
-     * @Route("/dynamic_match", name="dynamic_match")
+     * @param $em
+     * @param $request
+     *
+     * @Route("/match", name="match")
+     *
+     * @return matches
+     * @return form
+     * @return success
      */
     public function matchDebugAgeAction(EntityManagerInterface $em, Request $request)
     {
-        $employees = $em->getRepository('AppBundle:Employee')
-            ->filterAllEmployees();
-
-        $newbies = $em->getRepository('AppBundle:Newbie')
-            ->filterAllNewbies();
+        $matches = $em->getRepository('AppBundle:Newbie')
+            ->filterAllJoinedNewbies();
 
         $form = $this->createForm(FilterType::class);
         $form->handleRequest($request);
@@ -105,41 +121,40 @@ class MatchController extends Controller
             $gender = $form->get('gender')->getData();
             $languages = $form->get('languages')->getData();
 
-            $employees = $em->getRepository('AppBundle:Employee')
-                ->filterByEmployee($age, $nationality, $languages, $gender);
-            $newbies = $em->getRepository('AppBundle:Newbie')
-                ->filterByNewbie($age, $nationality, $languages, $gender);
+            $matches = $em->getRepository('AppBundle:Employee')
+                ->filterJoinedEmployee($age, $nationality, $languages, $gender);
         }
 
         $success = 'Filters where applied!';
 
         //Array that saves the times each Newbie is appearing in the table
         //$result = $this->elementsArray($newbies);
-        //print_r($result);
+        //print_r($matches[3]);
 
         //Distinct Results on the newbies array
         //$distinctNewbies = array_map("unserialize", array_unique(array_map("serialize", $newbies)));
 
-        return $this->render('default/match.html.twig', [
-            'employees' => $employees,
-            'newbies' => $newbies,
+        return $this->render('default/debug.html.twig', [
+            'matches' => $matches,
             'form' => $form->createView(),
             'success' => $success
         ]);
     }
 
     //Function to count how many times a newbie is returned when matched with different employees
-    public function elementsArray($rows) {
-
+    public function elementsArray($rows)
+    {
         $lastname = '';
         $times = 1;
         $array = array();
 
         foreach($rows as $row) {
-            if($row['lastname'] == $lastname) {
+            if($row['lastname'] == $lastname)
+            {
                 $times++;
             }
-            else {
+            else
+            {
                 array_push($array, $times);
                 $lastname = $row['lastname'];
                 $times =1;

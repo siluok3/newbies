@@ -8,12 +8,13 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\DTO\MatchingRequirements;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 class MatchRepository extends EntityRepository
 {
-    public function findByEmployee($nationality, $age, $gender)
+    public function findByEmployee(MatchingRequirements $requirements)
     {
         $matchingCondition = '';
 

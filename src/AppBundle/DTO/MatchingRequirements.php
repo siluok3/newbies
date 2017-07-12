@@ -14,9 +14,14 @@ class MatchingRequirements
     private $age;
     private $nationality;
     private $gender;
+    private $languages;
 
-    public function __construct($age, $gender, $nationality)
+    public function __construct($age, $gender, $nationality, $languages)
     {
+        $this->age = $age;
+        $this->gender = $gender;
+        $this->nationality = $nationality;
+        $this->languages = $languages;
     }
 
     /**
@@ -43,4 +48,11 @@ class MatchingRequirements
         return $this->gender;
     }
 
+    /**
+     * @return array
+     */
+    public function getLanguages()
+    {
+        return $this->languages;
+    }
 }

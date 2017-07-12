@@ -19,7 +19,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 class NewbieController extends Controller
 {
     /**
+     * @param EntityManagerInterface $em
+     *
      * @Route("/create_newbie", name="create_newbie_route")
+     *
+     * @return Response
      */
     public function createNewbieAction(EntityManagerInterface $em)
     {

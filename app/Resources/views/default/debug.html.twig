@@ -18,27 +18,27 @@
         <div class="table-responsive col-md-6">
             <table class="table" style="float: left">
                 <tr>
-                    <th>Newbie</th>
+                    <th>Employee</th>
                     <th>Nationality</th>
                     <th>Gender</th>
                     <th>Age</th>
                     <th>Languages</th>
                 </tr>
-                {% for newbie in newbies %}
+                {% for match in matches %}
                     <tr>
-                        <td>{{ newbie.firstname | default('No match!') }} {{ newbie.lastname | default('') }}</td>
-                        <td>{{ newbie.nationality | default('No match!')}}</td>
-                        {% if newbie.gender is not defined %}
-                            <td>{{ newbie.gender | default('No match!') }}</td>
+                        <td>{{ match.firstname | default('') }} {{ match.lastname | default('') }}</td>
+                        <td>{{ match.nationality | default('')}}</td>
+                        {% if match.gender is not defined %}
+                            <td>{{ match.gender | default('No match!') }}</td>
                         {% else %}
-                            <td>{{ newbie.gender|genderDecision }}</td>
+                            <td>{{ match.gender|genderDecision }}</td>
                         {% endif %}
-                        <td>{{ newbie.age | default('No match!') }}</td>
-                        {% if newbie.languages is not defined %}
-                            <td>{{ newbie.languages | default('No match!') }}</td>
+                        <td>{{ match.age | default('') }}</td>
+                        {% if match.languages is not defined %}
+                            <td>{{ match.languages | default('') }}</td>
                         {% else %}
-                            {% for key, language in newbie.languages %}
-                                <td>{{ newbie.languages[key] }}</td>
+                            {% for key, language in match.languages %}
+                                <td>{{ match.languages[key] }}</td>
                             {% endfor %}
                         {% endif %}
                     </tr>
@@ -51,10 +51,5 @@
                 $(this).remove();
             });
         }, 2000);
-
-        var boxes = $('.col-md-1');
-        boxes.on('change', function () {
-            $('#filter_match').prop('disabled', !boxes.filter(':checked').length);
-        }).trigger('change');
     </script>
 {% endblock %}
