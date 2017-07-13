@@ -10,57 +10,86 @@ namespace AppBundle\Repository;
 
 use AppBundle\DTO\MatchingRequirements;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query;
 
 class MatchRepository extends EntityRepository
 {
-    public function findByEmployee(MatchingRequirements $requirements)
+    /**
+     * @param MatchingRequirements $requirements
+     *
+     * @return array
+     */
+    public function findByPerson(MatchingRequirements $requirements)
     {
         $matchingCondition = '';
+        $and = ' AND ';
 
-        if ($age == true) {
-            $matchingCondition .= 'ON e.age = n.age';
+        if($requirements->isAgeRequirement())
+        {
+            $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
         }
 
-        if ($nationality == true) {
-            $matchingCondition .= 'ON e.nationality = n.nationality';
+        if($requirements->isNationalityRequirement())
+        {
+            $condition = ' e.nationality = n.nationality ';
+            if(empty($matchingCondition))
+            {
+                $matchingCondition .= $condition;
+            }
+            else
+            {
+                $matchingCondition .= $and . $condition;
+            }
         }
 
-        if ($gender == true) {
-            $matchingCondition .= 'ON abs(e.age-n.age) <= 5';
+        if($requirements->isGenderRequirement())
+        {
+            $condition = ' e.gender = n.gender ';
+            if(empty($matchingCondition))
+            {
+                $matchingCondition .= $condition;
+            }
+            else
+            {
+                $matchingCondition .= $and . $condition;
+            }
         }
 
-        $qbEmployee = $this->createQueryBuilder('e');
-        $qbEmployee->select('e')
-            ->from('AppBundle:Employee', 'e')
-            ->join('AppBundle:Newbie', 'n', Join::WITH, $matchingCondition);
+        if($requirements->isLanguagesRequirement())
+        {
+            $condition = ' n.languages = e.languages';
+            if(empty($matchingCondition))
+            {
+                $matchingCondition .= $condition;
+            }
+            else
+            {
+                $matchingCondition .= $and . $condition;
+            }
+        }
 
-        return $qbEmployee->getQuery()->execute();
+        $qb =$this->createQueryBuilder('e')
+            ->select('n, e')
+            ->leftJoin('AppBundle:Newbie', 'n', 'WITH', $matchingCondition )
+            //->groupBy('e')
+            ->getQuery()
+            ->getResult();
+
+        return $qb;
 
     }
 
-    public function findByNewbie($nationality, $age, $gender)
+    /**
+     * @return array
+     */
+    public function filterAllJoinedNewbies()
     {
-        $matchingCondition = '';
+        $qb = $this->createQueryBuilder('n')
+            ->select('e,n')
+            ->leftJoin('AppBundle:Employee', 'e', 'WITH', 'abs(e.age-n.age) <= 5 AND e.nationality = n.nationality AND e.gender = n.gender AND n.languages = e.languages' )
+            ->getQuery()
+            ->getResult();
 
-        if ($age == true) {
-            $matchingCondition .= 'ON e.age = n.age';
-        }
-
-        if ($nationality == true) {
-            $matchingCondition .= 'ON e.nationality = n.nationality';
-        }
-
-        if ($gender == true) {
-            $matchingCondition .= 'ON abs(e.age-n.age) <= 5';
-        }
-
-        $qbNewbie = $this->createQueryBuilder('n');
-        $qbNewbie->select('n')
-            ->from('AppBundle:Newbie', 'n')
-            ->join('AppBundle:Employee', 'e', Join::WITH, $matchingCondition);
-
-        return $qbNewbie->getQuery()->execute();
-
+        return $qb;
     }
 }

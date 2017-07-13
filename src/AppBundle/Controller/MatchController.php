@@ -8,6 +8,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\DTO\MatchingRequirements;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Id;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -74,8 +75,8 @@ class MatchController extends Controller
         $form = $this->createForm(FilterType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-
+        if($form->isSubmitted() && $form->isValid())
+        {
             $nationality = $form->get('nationality')->getData();
             $age = $form->get('age')->getData();
             $gender = $form->get('gender')->getData();
@@ -86,8 +87,6 @@ class MatchController extends Controller
         }
 
         $success = 'Filters were applied!';
-
-        //var_dump($newbies);
 
         return $this->render('default/joined.html.twig', [
             'newbies' => $newbies,
@@ -106,7 +105,7 @@ class MatchController extends Controller
      * @return form
      * @return success
      */
-    public function matchDebugAgeAction(EntityManagerInterface $em, Request $request)
+    public function matchDebugAction(EntityManagerInterface $em, Request $request)
     {
         $matches = $em->getRepository('AppBundle:Newbie')
             ->filterAllJoinedNewbies();
@@ -114,15 +113,17 @@ class MatchController extends Controller
         $form = $this->createForm(FilterType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-
+        if($form->isSubmitted() && $form->isValid())
+        {
             $nationality = $form->get('nationality')->getData();
             $age = $form->get('age')->getData();
             $gender = $form->get('gender')->getData();
             $languages = $form->get('languages')->getData();
 
+            $matchingRequirements = new MatchingRequirements($age, $gender, $nationality, $languages);
+
             $matches = $em->getRepository('AppBundle:Employee')
-                ->filterJoinedEmployee($age, $nationality, $languages, $gender);
+                ->findByPerson($matchingRequirements);
         }
 
         $success = 'Filters where applied!';

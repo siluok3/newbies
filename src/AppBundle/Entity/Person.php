@@ -9,6 +9,11 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Person
+ *
+ */
 abstract class Person
 {
     /**
@@ -214,6 +219,18 @@ abstract class Person
     public function getLanguages()
     {
         return $this->languages;
+    }
+
+    public function isMale($value)
+    {
+        if($value == 0) {
+            $genderDecision =  "Male";
+        }
+        else {
+            $genderDecision = "Female";
+        }
+
+        return $genderDecision;
     }
 
 }

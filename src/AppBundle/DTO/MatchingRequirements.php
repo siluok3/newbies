@@ -16,6 +16,13 @@ class MatchingRequirements
     private $gender;
     private $languages;
 
+    /**
+     * MatchingRequirements constructor.
+     * @param $age
+     * @param $gender
+     * @param $nationality
+     * @param $languages
+     */
     public function __construct($age, $gender, $nationality, $languages)
     {
         $this->age = $age;
@@ -33,11 +40,27 @@ class MatchingRequirements
     }
 
     /**
+     * @return bool | If Data "Age" passed from the Form is true
+     */
+    public function isAgeRequirement()
+    {
+        return $this->getAge() == true;
+    }
+
+    /**
      * @return string|null
      */
     public function getNationality()
     {
         return $this->nationality;
+    }
+
+    /**
+     * @return bool | If Data "Nationality" passed from the Form is true
+     */
+    public function isNationalityRequirement()
+    {
+        return $this->getNationality() == true;
     }
 
     /**
@@ -49,10 +72,26 @@ class MatchingRequirements
     }
 
     /**
+     * @return bool | If Data "gender" passed from the Form is true
+     */
+    public function isGenderRequirement()
+    {
+        return $this->getGender() == true;
+    }
+
+    /**
      * @return array
      */
     public function getLanguages()
     {
         return $this->languages;
+    }
+
+    /**
+     * @return bool | If Data "Languages" passed from the Form is true
+     */
+    public function isLanguagesRequirement()
+    {
+        return $this->getLanguages() == true;
     }
 }

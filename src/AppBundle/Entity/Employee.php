@@ -10,8 +10,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Employee
  *
  * @ORM\Table(name="employee")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\EmployeeRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MatchRepository")
  */
 class Employee extends Person
 {
 }
+

@@ -25,36 +25,44 @@ class EmployeeRepository extends \Doctrine\ORM\EntityRepository
     public function filterJoinedEmployee($age, $nationality, $languages, $gender)
     {
         $matchingCondition = ' ';
+        $and = ' AND ';
         $flag = 0;
 
-        if ($age == true) {
+        if($age == true)
+        {
             $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
             $flag++;
         }
 
-        if ($nationality == true) {
-            if($flag == 0) $matchingCondition .= ' e.nationality = n.nationality ';
-            else $matchingCondition .= ' AND e.nationality = n.nationality';
+        if($nationality == true)
+        {
+            $condition = ' e.nationality = n.nationality ';
+            if($flag == 0) $matchingCondition .= $condition;
+            else $matchingCondition .= $and . $condition;
             $flag++;
         }
 
-        if ($gender == true) {
-            if($flag == 0) $matchingCondition .= ' e.gender = n.gender ';
-            else $matchingCondition .= ' AND e.gender = n.gender ';
+        if($gender == true)
+        {
+            $condition = ' e.gender = n.gender ';
+            if($flag == 0) $matchingCondition .= $condition;
+            else $matchingCondition .= $and . $condition;
             $flag++;
         }
 
-        if ($languages == true){
-            if($flag == 0) $matchingCondition .= ' n.languages = e.languages ';
-            else $matchingCondition .= ' AND n.languages = e.languages ';
+        if($languages == true)
+        {
+            $condition = ' n.languages = e.languages';
+            if($flag == 0) $matchingCondition .= $condition;
+            else $matchingCondition .= $and . $condition;
         }
 
         $qb =$this->createQueryBuilder('e')
             ->select('e,n')
             ->leftJoin('AppBundle:Newbie', 'n', 'WITH', $matchingCondition )
-            ->groupBy('e.id')
+            //->groupBy('e.id')
             ->getQuery()
-            ->getResult();
+            ->execute();
 
         return $qb;
     }
