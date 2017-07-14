@@ -19,28 +19,28 @@
     <div class="table-responsive col-md-6">
         <table class="table" style="float: left">
             <tr>
-                <th>Matched Employee</th>
+                <th>Newbie</th>
                 <th>Nationality</th>
                 <th>Gender</th>
                 <th>Age</th>
                 <th>Languages</th>
             </tr>
-            {% for newbie in newbies %}
+            {% for match in matches %}
             {% if loop.index is even %}
                 <tr>
-                    <td>{{ newbie.firstname | default('No match!') }} {{ newbie.lastname | default('') }}</td>
-                    <td>{{ newbie.nationality | default('No match!')}}</td>
-                    {% if newbie.gender is not defined %}
-                        <td>{{ newbie.gender | default('No match!') }}</td>
+                    <td>{{ match.firstname | default('No match!') }} {{ match.lastname | default('') }} {{ dump(match) }}</td>
+                    <td>{{ match.nationality | default('No match!')}}</td>
+                    {% if match.gender is not defined %}
+                        <td>{{ match.gender | default('No match!') }}</td>
                     {% else %}
-                        <td>{{ newbie.gender|genderDecision }}</td>
+                        <td>{{ match.gender|genderDecision }}</td>
                     {% endif %}
-                    <td>{{ newbie.age | default('No match!') }}</td>
-                    {% if newbie.languages is not defined %}
-                        <td>{{ newbie.languages | default('No match!') }}</td>
+                    <td>{{ match.age | default('No match!') }}</td>
+                    {% if match.languages is not defined %}
+                        <td>{{ match.languages | default('No match!') }}</td>
                     {% else %}
-                        {% for key, language in newbie.languages %}
-                            <td>{{ newbie.languages[key] }}</td>
+                        {% for key, language in match.languages %}
+                            <td>{{ match.languages[key] }}</td>
                         {% endfor %}
                     {% endif %}
                 </tr>
@@ -51,28 +51,28 @@
     <div class="table-responsive col-md-6">
         <table class="table" style="float: left">
             <tr>
-                <th>Newbie</th>
+                <th>Matched Employee</th>
                 <th>Nationality</th>
                 <th>Gender</th>
                 <th>Age</th>
                 <th>Languages</th>
             </tr>
-            {% for newbie in newbies %}
+            {% for match in matches %}
             {% if loop.index is odd %}
                 <tr>
-                    <td>{{ newbie.firstname | default('No match!') }} {{ newbie.lastname | default('') }}</td>
-                    <td>{{ newbie.nationality | default('No match!')}}</td>
+                    <td>{{ match.firstname | default('No match!') }} {{ match.lastname | default('') }} {{ dump(match) }}</td>
+                    <td>{{ match.nationality | default('No match!')}}</td>
                     {% if newbie.gender is not defined %}
-                        <td>{{ newbie.gender | default('No match!') }}</td>
+                        <td>{{ match.gender | default('No match!') }}</td>
                     {% else %}
-                        <td>{{ newbie.gender|genderDecision }}</td>
+                        <td>{{ match.gender|genderDecision }}</td>
                     {% endif %}
-                    <td>{{ newbie.age | default('No match!') }}</td>
-                    {% if newbie.languages is not defined %}
-                        <td>{{ newbie.languages | default('No match!') }}</td>
+                    <td>{{ match.age | default('No match!') }}</td>
+                    {% if match.languages is not defined %}
+                        <td>{{ match.languages | default('No match!') }}</td>
                     {% else %}
-                        {% for key, language in newbie.languages %}
-                            <td>{{ newbie.languages[key] }}</td>
+                        {% for key, language in match.languages %}
+                            <td>{{ match.languages[key] }}</td>
                         {% endfor %}
                     {% endif %}
                 </tr>

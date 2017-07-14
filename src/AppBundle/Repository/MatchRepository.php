@@ -11,6 +11,7 @@ namespace AppBundle\Repository;
 use AppBundle\DTO\MatchingRequirements;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 class MatchRepository extends EntityRepository
 {
@@ -26,7 +27,7 @@ class MatchRepository extends EntityRepository
 
         if($requirements->isAgeRequirement())
         {
-            $matchingCondition .= ' abs(e.age-n.age) <= 5 ';
+            $matchingCondition .= ' ABS(e.age-n.age) <= 5 ';
         }
 
         if($requirements->isNationalityRequirement())
@@ -73,7 +74,7 @@ class MatchRepository extends EntityRepository
             ->leftJoin('AppBundle:Newbie', 'n', 'WITH', $matchingCondition )
             //->groupBy('e')
             ->getQuery()
-            ->getResult();
+            ->getScalarResult();
 
         return $qb;
 
@@ -85,7 +86,7 @@ class MatchRepository extends EntityRepository
     public function filterAllJoinedNewbies()
     {
         $qb = $this->createQueryBuilder('n')
-            ->select('e,n')
+            ->select('e, n')
             ->leftJoin('AppBundle:Employee', 'e', 'WITH', 'abs(e.age-n.age) <= 5 AND e.nationality = n.nationality AND e.gender = n.gender AND n.languages = e.languages' )
             ->getQuery()
             ->getResult();

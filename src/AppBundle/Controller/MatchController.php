@@ -135,7 +135,7 @@ class MatchController extends Controller
         //Distinct Results on the newbies array
         //$distinctNewbies = array_map("unserialize", array_unique(array_map("serialize", $newbies)));
 
-        return $this->render('default/debug.html.twig', [
+        return $this->render('default/joined.html.twig', [
             'matches' => $matches,
             'form' => $form->createView(),
             'success' => $success
