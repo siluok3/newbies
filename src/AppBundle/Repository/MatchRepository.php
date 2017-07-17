@@ -15,6 +15,8 @@ use Doctrine\ORM\Query\ResultSetMapping;
 
 class MatchRepository extends EntityRepository
 {
+    const AND_K = ' AND ';
+
     /**
      * @param MatchingRequirements $requirements
      *
@@ -23,56 +25,35 @@ class MatchRepository extends EntityRepository
     public function findByPerson(MatchingRequirements $requirements)
     {
         $matchingCondition = '';
-        $and = ' AND ';
 
-        if($requirements->isAgeRequirement())
-        {
-            $matchingCondition .= ' ABS(e.age-n.age) <= 5 ';
-        }
+        $this->appendCondition(
+            $matchingCondition,
+            $requirements->isAgeRequirement(),
+            ' ABS(e.age-n.age) <= 5 '
+        );
 
-        if($requirements->isNationalityRequirement())
-        {
-            $condition = ' e.nationality = n.nationality ';
-            if(empty($matchingCondition))
-            {
-                $matchingCondition .= $condition;
-            }
-            else
-            {
-                $matchingCondition .= $and . $condition;
-            }
-        }
+        $this->appendCondition(
+            $matchingCondition,
+            $requirements->isNationalityRequirement(),
+            ' n.nationality = e.nationality '
+        );
 
-        if($requirements->isGenderRequirement())
-        {
-            $condition = ' e.gender = n.gender ';
-            if(empty($matchingCondition))
-            {
-                $matchingCondition .= $condition;
-            }
-            else
-            {
-                $matchingCondition .= $and . $condition;
-            }
-        }
+        $this->appendCondition(
+            $matchingCondition,
+            $requirements->isGenderRequirement(),
+            ' n.gender = e.gender '
+        );
 
-        if($requirements->isLanguagesRequirement())
-        {
-            $condition = ' n.languages = e.languages';
-            if(empty($matchingCondition))
-            {
-                $matchingCondition .= $condition;
-            }
-            else
-            {
-                $matchingCondition .= $and . $condition;
-            }
-        }
+        $this->appendCondition(
+            $matchingCondition,
+            $requirements->isLanguagesRequirement(),
+            ' n.languages = e.languages '
+        );
 
-        $qb =$this->createQueryBuilder('e')
+        $qb =$this->createQueryBuilder('n')
             ->select('n, e')
-            ->leftJoin('AppBundle:Newbie', 'n', 'WITH', $matchingCondition )
-            //->groupBy('e')
+            ->leftJoin('AppBundle:Employee', 'e', 'WITH', $matchingCondition )
+            ->orderBy('n.id')
             ->getQuery()
             ->getScalarResult();
 
@@ -87,10 +68,30 @@ class MatchRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('n')
             ->select('e, n')
-            ->leftJoin('AppBundle:Employee', 'e', 'WITH', 'abs(e.age-n.age) <= 5 AND e.nationality = n.nationality AND e.gender = n.gender AND n.languages = e.languages' )
+            ->leftJoin(
+                'AppBundle:Employee',
+                'e',
+                'WITH',
+                'abs(e.age-n.age) <= 5
+                  AND e.nationality = n.nationality
+                  AND e.gender = n.gender
+                  AND n.languages = e.languages'
+            )
             ->getQuery()
-            ->getResult();
+            ->getScalarResult();
 
         return $qb;
+    }
+
+    private function appendCondition(&$matchingCondition, $isRequired, $condition)
+    {
+        if($isRequired)
+        {
+            if(!empty($matchingCondition))
+            {
+                $matchingCondition .= static::AND_K;
+            }
+            $matchingCondition .= $condition;
+        }
     }
 }

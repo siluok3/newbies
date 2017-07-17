@@ -15,22 +15,21 @@
         {% for newbie in newbies %}
         <tr>
             <td>{{ newbie.id }}</td>
-
             <td>{{ newbie.firstname }}</td>
-
             <td>{{ newbie.lastname }}</td>
-
             {% if newbie.gender is same as(0) %}
                 <td>Male</td>
             {% else %}
                 <td>Female</td>
             {% endif %}
-
             <td>{{ newbie.nationality }}</td>
-
-            {% for key, language in newbie.languages %}
-                <td>{{ newbie.languages[key] }}</td>
-            {% endfor %}
+            <td>
+                <ul>
+                    {% for key, language in newbie.languages %}
+                        <li>{{ newbie.languages[key] }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
         </tr>
         {% endfor %}
     </table>

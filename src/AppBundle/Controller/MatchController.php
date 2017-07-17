@@ -9,6 +9,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\DTO\MatchingRequirements;
+use AppBundle\Repository\MatchRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Id;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -61,54 +62,20 @@ class MatchController extends Controller
      * @param $em
      * @param $request
      *
-     * @Route("/joined", name="joined")
-     *
-     * @return newbies
-     * @return form
-     * @return success
-     */
-    public function matchJoinAction(EntityManagerInterface $em, Request $request)
-    {
-        $newbies = $em->getRepository('AppBundle:Newbie')
-            ->filterAllJoinedNewbies();
-
-        $form = $this->createForm(FilterType::class);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid())
-        {
-            $nationality = $form->get('nationality')->getData();
-            $age = $form->get('age')->getData();
-            $gender = $form->get('gender')->getData();
-            $languages = $form->get('languages')->getData();
-
-            $newbies = $em->getRepository('AppBundle:Newbie')
-                ->filterJoinedNewbie($age, $nationality, $languages, $gender);
-        }
-
-        $success = 'Filters were applied!';
-
-        return $this->render('default/joined.html.twig', [
-            'newbies' => $newbies,
-            'form' => $form->createView(),
-            'success' => $success
-        ]);
-    }
-
-    /**
-     * @param $em
-     * @param $request
-     *
      * @Route("/match", name="match")
      *
      * @return matches
      * @return form
      * @return success
      */
-    public function matchDebugAction(EntityManagerInterface $em, Request $request)
+    public function matchAction(EntityManagerInterface $em, Request $request)
     {
-        $matches = $em->getRepository('AppBundle:Newbie')
-            ->filterAllJoinedNewbies();
+        /**
+         * @var MatchRepository $repository
+         */
+        $repository = $em->getRepository('AppBundle:Newbie');
+
+        $matches = $repository->filterAllJoinedNewbies();
 
         $form = $this->createForm(FilterType::class);
         $form->handleRequest($request);
@@ -122,15 +89,16 @@ class MatchController extends Controller
 
             $matchingRequirements = new MatchingRequirements($age, $gender, $nationality, $languages);
 
-            $matches = $em->getRepository('AppBundle:Employee')
-                ->findByPerson($matchingRequirements);
+            $matches = $repository->findByPerson($matchingRequirements);
         }
 
         $success = 'Filters where applied!';
 
+        $result = $this->getResults($matches);
+        print_r($result);
         //Array that saves the times each Newbie is appearing in the table
         //$result = $this->elementsArray($newbies);
-        //print_r($matches[3]);
+        //print_r($matches);
 
         //Distinct Results on the newbies array
         //$distinctNewbies = array_map("unserialize", array_unique(array_map("serialize", $newbies)));
@@ -142,6 +110,17 @@ class MatchController extends Controller
         ]);
     }
 
+    public function getResults($arr)
+    {
+        foreach($arr as $element)
+        {
+            $newbie_id = $element['n_id'];
+            if (count(array_keys($arr, $newbie_id)) > 3)
+            {
+                unset($newbie);
+            }
+        }
+    }
     //Function to count how many times a newbie is returned when matched with different employees
     public function elementsArray($rows)
     {

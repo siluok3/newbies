@@ -16,7 +16,7 @@
     </div>
     {{ form_end(form) }}
     <p class="h2"><h2>Matches</h2></p>
-    <div class="table-responsive col-md-6">
+    <div class="table-responsive col-md-12">
         <table class="table" style="float: left">
             <tr>
                 <th>Newbie</th>
@@ -24,33 +24,7 @@
                 <th>Gender</th>
                 <th>Age</th>
                 <th>Languages</th>
-            </tr>
-            {% for match in matches %}
-            {% if loop.index is even %}
-                <tr>
-                    <td>{{ match.firstname | default('No match!') }} {{ match.lastname | default('') }} {{ dump(match) }}</td>
-                    <td>{{ match.nationality | default('No match!')}}</td>
-                    {% if match.gender is not defined %}
-                        <td>{{ match.gender | default('No match!') }}</td>
-                    {% else %}
-                        <td>{{ match.gender|genderDecision }}</td>
-                    {% endif %}
-                    <td>{{ match.age | default('No match!') }}</td>
-                    {% if match.languages is not defined %}
-                        <td>{{ match.languages | default('No match!') }}</td>
-                    {% else %}
-                        {% for key, language in match.languages %}
-                            <td>{{ match.languages[key] }}</td>
-                        {% endfor %}
-                    {% endif %}
-                </tr>
-             {% endif %}
-            {% endfor %}
-        </table>
-    </div>
-    <div class="table-responsive col-md-6">
-        <table class="table" style="float: left">
-            <tr>
+                <th>-</th>
                 <th>Matched Employee</th>
                 <th>Nationality</th>
                 <th>Gender</th>
@@ -58,25 +32,45 @@
                 <th>Languages</th>
             </tr>
             {% for match in matches %}
-            {% if loop.index is odd %}
                 <tr>
-                    <td>{{ match.firstname | default('No match!') }} {{ match.lastname | default('') }} {{ dump(match) }}</td>
-                    <td>{{ match.nationality | default('No match!')}}</td>
-                    {% if newbie.gender is not defined %}
-                        <td>{{ match.gender | default('No match!') }}</td>
+                    <td>{{ match.n_firstname }} {{ match.n_lastname }}</td>
+                    <td>{{ match.n_nationality }}</td>
+                    <td>{{ match.n_gender|genderDecision }}</td>
+                    <td>{{ match.n_age }}</td>
+                    <td>
+                        <ul>
+                            {% for language in match.n_languages %}
+                                <li class="list-unstyled">{{ language }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+
+                    <td>-</td>
+
+                    <td>{{ match.e_firstname | default('') }} {{ match.e_lastname | default('') }}</td>
+                    {% if match.e_nationality is null %}
+                        <td><strong>No Match!</strong></td>
                     {% else %}
-                        <td>{{ match.gender|genderDecision }}</td>
+                        <td> {{ match.e_nationality }}</td>
                     {% endif %}
-                    <td>{{ match.age | default('No match!') }}</td>
-                    {% if match.languages is not defined %}
-                        <td>{{ match.languages | default('No match!') }}</td>
+                    {% if match.e_gender is null %}
+                        <td>{{ match.e_gender | default('') }}</td>
                     {% else %}
-                        {% for key, language in match.languages %}
-                            <td>{{ match.languages[key] }}</td>
-                        {% endfor %}
+                        <td>{{ match.e_gender | genderDecision }}</td>
                     {% endif %}
+                    <td>{{ match.e_age | default('') }}</td>
+                    <td>
+                        {% if match.e_languages is not defined %}
+                            No match!
+                        {% else %}
+                            <ul class="list-unstyled">
+                                {% for language in match.e_languages %}
+                                    <li>{{ language }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </td>
                 </tr>
-            {% endif %}
             {% endfor %}
         </table>
     </div>
