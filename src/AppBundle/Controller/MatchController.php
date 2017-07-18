@@ -10,6 +10,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\DTO\MatchingRequirements;
 use AppBundle\Repository\MatchRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Id;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -22,18 +23,50 @@ class MatchController extends Controller
     /**
      * @Route("/", name="homepage")
      *
-     * @return view
+     * @param EntityManagerInterface $em
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function indexAction(EntityManagerInterface $em, Request $request)
     {
-        return $this->render('default/index.html.twig');
+        /**
+         * @var MatchRepository $repository
+         */
+        $repository = $em->getRepository('AppBundle:Newbie');
+
+        $form = $this->createForm(FilterType::class);
+        $form->handleRequest($request);
+
+        $nationality = $form->get('nationality')->getData();
+        $age = $form->get('age')->getData();
+        $gender = $form->get('gender')->getData();
+        $languages = $form->get('languages')->getData();
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $matchingRequirements = new MatchingRequirements($age, $gender, $nationality, $languages);
+            $matches = $repository->findByPerson($matchingRequirements);
+
+            $success = 'Filters where applied!';
+
+            return $this->render('default/joined.html.twig', [
+                'matches' => $matches,
+                'form' => $form->createView(),
+                'success' => $success,
+            ]);
+        }
+
+        return $this->render('default/index.html.twig', [
+            'form' => $form->createView(),
+        ]);
 
     }
 
     /**
      * @Route("/newbies", name="newbies_list")
      *
-     * @return newbies
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listNewbiesAction()
     {
@@ -47,7 +80,7 @@ class MatchController extends Controller
     /**
      * @Route("/employees", name="employees_list")
      *
-     * @return employees
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listEmployeesAction()
     {
@@ -64,9 +97,7 @@ class MatchController extends Controller
      *
      * @Route("/match", name="match")
      *
-     * @return matches
-     * @return form
-     * @return success
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function matchAction(EntityManagerInterface $em, Request $request)
     {
@@ -74,8 +105,6 @@ class MatchController extends Controller
          * @var MatchRepository $repository
          */
         $repository = $em->getRepository('AppBundle:Newbie');
-
-        $matches = $repository->filterAllJoinedNewbies();
 
         $form = $this->createForm(FilterType::class);
         $form->handleRequest($request);
@@ -94,53 +123,10 @@ class MatchController extends Controller
 
         $success = 'Filters where applied!';
 
-        $result = $this->getResults($matches);
-        print_r($result);
-        //Array that saves the times each Newbie is appearing in the table
-        //$result = $this->elementsArray($newbies);
-        //print_r($matches);
-
-        //Distinct Results on the newbies array
-        //$distinctNewbies = array_map("unserialize", array_unique(array_map("serialize", $newbies)));
-
         return $this->render('default/joined.html.twig', [
             'matches' => $matches,
             'form' => $form->createView(),
-            'success' => $success
+            'success' => $success,
         ]);
-    }
-
-    public function getResults($arr)
-    {
-        foreach($arr as $element)
-        {
-            $newbie_id = $element['n_id'];
-            if (count(array_keys($arr, $newbie_id)) > 3)
-            {
-                unset($newbie);
-            }
-        }
-    }
-    //Function to count how many times a newbie is returned when matched with different employees
-    public function elementsArray($rows)
-    {
-        $lastname = '';
-        $times = 1;
-        $array = array();
-
-        foreach($rows as $row) {
-            if($row['lastname'] == $lastname)
-            {
-                $times++;
-            }
-            else
-            {
-                array_push($array, $times);
-                $lastname = $row['lastname'];
-                $times =1;
-            }
-        }
-        unset($array[0]);
-        return $array;
     }
 }

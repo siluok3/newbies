@@ -11,6 +11,9 @@ namespace AppBundle\Twig;
 
 class AppExtension extends \Twig_Extension
 {
+    /**
+     * @return array
+     */
     public function getFilters()
     {
         return array(
@@ -18,6 +21,11 @@ class AppExtension extends \Twig_Extension
         );
     }
 
+    /**
+     * @param $value
+     *
+     * @return string
+     */
     public function isMale($value)
     {
         if($value == 0) {

@@ -19,7 +19,16 @@ body {
     padding-top: 15px;
     padding-left: 1pc;
 }
+.index_row {
+    padding-left: 340px;
+}
 
 h2 {
     margin-left: 20px!important;
+}
+
+.center_div {
+    margin-left: 100px;
+    width: 105%;
+    padding-left: 400px;
 }

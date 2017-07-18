@@ -17,16 +17,12 @@
             <td>{{ employee.id }}</td>
             <td>{{ employee.firstname }}</td>
             <td>{{ employee.lastname }}</td>
-            {% if employee.gender is same as(0) %}
-                <td>Male</td>
-            {% else %}
-                <td>Female</td>
-            {% endif %}
+            <td>{{ employee.genderText }}</td>
             <td>{{ employee.nationality }}</td>
             <td>
                 <ul>
                     {% for key, language in employee.languages %}
-                        <li>{{ employee.languages[key] }}</li>
+                        <li class="list-unstyled">{{ employee.languages[key] }}</li>
                     {% endfor %}
                 </ul>
             </td>

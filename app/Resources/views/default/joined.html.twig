@@ -1,6 +1,5 @@
 {% extends '::base.html.twig' %}
 {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-{#{% form_theme form 'form/checkboxes.html.twig' %}#}
 
 {% block body %}
     <div class="alert alert-success">
@@ -35,7 +34,7 @@
                 <tr>
                     <td>{{ match.n_firstname }} {{ match.n_lastname }}</td>
                     <td>{{ match.n_nationality }}</td>
-                    <td>{{ match.n_gender|genderDecision }}</td>
+                    <td>{{ match.n_gender | genderDecision }}</td>
                     <td>{{ match.n_age }}</td>
                     <td>
                         <ul>
@@ -80,10 +79,5 @@
                 $(this).remove();
             });
         }, 2000);
-
-        var boxes = $('.col-md-1');
-        boxes.on('change', function () {
-            $('#filter_match').prop('disabled', !boxes.filter(':checked').length);
-        }).trigger('change');
     </script>
 {% endblock %}

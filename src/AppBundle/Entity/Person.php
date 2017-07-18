@@ -8,8 +8,8 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\AppBundle;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMS;
 
 /**
  * Person
@@ -83,7 +83,7 @@ abstract class Person
      *
      * @param string $firstname
      *
-     * @return Newbie
+     * @return Person
      */
     public function setFirstname($firstname)
     {
@@ -107,7 +107,7 @@ abstract class Person
      *
      * @param string $lastname
      *
-     * @return Newbie
+     * @return Person
      */
     public function setLastname($lastname)
     {
@@ -131,7 +131,7 @@ abstract class Person
      *
      * @param string $nationality
      *
-     * @return Newbie
+     * @return Person
      */
     public function setNationality($nationality)
     {
@@ -155,7 +155,7 @@ abstract class Person
      *
      * @param integer $gender
      *
-     * @return Newbie
+     * @return Person
      */
     public function setGender($gender)
     {
@@ -179,7 +179,7 @@ abstract class Person
      *
      * @param integer $age
      *
-     * @return Newbie
+     * @return Person
      */
     public function setAge($age)
     {
@@ -203,7 +203,7 @@ abstract class Person
      *
      * @param array $languages
      *
-     * @return Newbie
+     * @return Person
      */
     public function setLanguages($languages)
     {
@@ -223,9 +223,14 @@ abstract class Person
     }
 
     /**
+     * Converts the boolean Gender value into a string
+     *
+     * @JMS\VirtualProperty
+     * @JMS\SerializedName("genderText")
+     *
      * @return string
      */
-    public function isMale()
+    public function getGenderText()
     {
         if($this->gender == 0) {
             $genderDecision =  "Male";
